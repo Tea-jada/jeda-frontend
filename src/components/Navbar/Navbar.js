@@ -1,7 +1,10 @@
 import React from 'react';
 import './Navbar.css';
+import { useNavigate } from 'react-router-dom';
 
 function Navbar() {
+  const navigate = useNavigate();
+
   return (
     <nav className="navbar">
       <div className="navbar-logo">제다</div>
@@ -71,7 +74,7 @@ function Navbar() {
       </ul>
       <div className="navbar-actions">
         <button>로그인</button>
-        <button>회원가입</button>
+        <button onClick={() => navigate('/signup-agreement')}>회원가입</button>
       </div>
     </nav>
   );
