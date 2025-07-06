@@ -1,5 +1,5 @@
 import Home from './pages/Home/Home';
-import SignupAgreement from './pages/Signup/AgreementPage';
+import SignupAgreement from './pages/Signup/SignupAgreement';
 import UserInfoPage from './pages/Signup/UserInfoPage';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
