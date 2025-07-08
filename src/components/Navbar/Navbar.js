@@ -73,7 +73,7 @@ function Navbar() {
         </li>
       </ul>
       <div className="navbar-actions">
-        <button>로그인</button>
+        <button onClick={() => navigate('/login')}>로그인</button>
         <button onClick={() => navigate('/signup-agreement')}>회원가입</button>
       </div>
     </nav>
