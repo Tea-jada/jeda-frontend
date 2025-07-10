@@ -2,6 +2,7 @@ import Home from './pages/Home/Home';
 import SignupAgreement from './pages/Signup/SignupAgreement';
 import UserInfoPage from './pages/Signup/UserInfoPage';
 import LoginPage from './pages/Login/LoginPage';
+import AdminSignupPage from './pages/Signup/AdminSignupPage';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup-agreement" element={<SignupAgreementWithNav />} />
         <Route path="/signup/user-info" element={<UserInfoPage />} />
+        <Route path="/admin-signup" element={<AdminSignupPage />} />
       </Routes>
     </Router>
   );
