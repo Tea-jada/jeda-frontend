@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { signup } from '../../api/user';
 
 function UserInfoPage() {
   const [form, setForm] = useState({
@@ -31,7 +32,7 @@ function UserInfoPage() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.email || !form.username || !form.password || !form.passwordConfirm) {
       setError('모든 항목을 입력해주세요.');
@@ -43,10 +44,19 @@ function UserInfoPage() {
     }
     setError('');
     setPwError('');
-    // 실제 회원가입 처리 로직은 추후 추가
-    console.log('회원가입 정보:', form);
-    alert('회원가입이 완료되었습니다!');
-    navigate('/');
+    try {
+      const data = await signup({
+        email: form.email,
+        username: form.username,
+        password: form.password,
+      });
+      alert(data.message);
+      if (data.status === 201) {
+        navigate('/');
+      }
+    } catch (err) {
+      setError('회원가입 요청 중 오류가 발생했습니다.');
+    }
   };
 
   return (
