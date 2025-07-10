@@ -4,6 +4,13 @@ import { useNavigate } from 'react-router-dom';
 
 function Navbar() {
   const navigate = useNavigate();
+  const isLoggedIn = !!localStorage.getItem('Authorization');
+
+  const handleLogout = () => {
+    localStorage.removeItem('Authorization');
+    localStorage.removeItem('Refresh-Token');
+    navigate('/');
+  };
 
   return (
     <nav className="navbar">
@@ -73,8 +80,17 @@ function Navbar() {
         </li>
       </ul>
       <div className="navbar-actions">
-        <button onClick={() => navigate('/login')}>로그인</button>
-        <button onClick={() => navigate('/signup-agreement')}>회원가입</button>
+        {isLoggedIn ? (
+          <>
+            <button onClick={() => navigate('/user-info')}>정보수정</button>
+            <button onClick={handleLogout}>로그아웃</button>
+          </>
+        ) : (
+          <>
+            <button onClick={() => navigate('/login')}>로그인</button>
+            <button onClick={() => navigate('/signup-agreement')}>회원가입</button>
+          </>
+        )}
       </div>
     </nav>
   );
