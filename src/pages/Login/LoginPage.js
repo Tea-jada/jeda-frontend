@@ -31,6 +31,11 @@ function LoginPage() {
       if (data.status === 200 && data.authorization) {
         localStorage.setItem('Authorization', data.authorization);
         localStorage.setItem('Refresh-Token', data.refreshToken);
+        if (data.role) {
+          localStorage.setItem('role', data.role);
+        } else {
+          localStorage.removeItem('role');
+        }
         navigate('/');
       }
     } catch (err) {

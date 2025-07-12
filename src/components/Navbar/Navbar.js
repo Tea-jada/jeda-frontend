@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function Navbar() {
   const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem('Authorization');
+  const isAdmin = localStorage.getItem('role') === 'ADMIN';
 
   const handleLogout = () => {
     localStorage.removeItem('Authorization');
@@ -83,6 +84,9 @@ function Navbar() {
         {isLoggedIn ? (
           <>
             <button onClick={() => navigate('/user-info')}>정보수정</button>
+            {isAdmin && (
+              <button onClick={() => navigate('/post-create')}>게시글 작성</button>
+            )}
             <button onClick={handleLogout}>로그아웃</button>
           </>
         ) : (
