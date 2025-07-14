@@ -2,8 +2,60 @@ import React from 'react';
 import './Navbar.css';
 import { useNavigate } from 'react-router-dom';
 
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
+
 function Navbar() {
   const navigate = useNavigate();
+  const token = localStorage.getItem('Authorization');
+  const isLoggedIn = !!token;
+  let isAdmin = false;
+  if (token) {
+    const payload = parseJwt(token);
+    console.log('JWT payload:', payload);
+    if (payload) {
+      console.log('JWT role:', payload.role);
+    }
+    isAdmin = payload && payload.role === 'ADMIN';
+  }
+
+  const handleLogout = React.useCallback(() => {
+    localStorage.removeItem('Authorization');
+    localStorage.removeItem('Refresh-Token');
+    navigate('/');
+  }, [navigate]);
+
+  React.useEffect(() => {
+    const token = localStorage.getItem('Authorization');
+    if (!token) return;
+    const payload = parseJwt(token);
+    if (!payload || !payload.exp) return;
+    const now = Math.floor(Date.now() / 1000);
+    if (payload.exp <= now) {
+      handleLogout();
+      return;
+    }
+    const timeout = (payload.exp - now) * 1000;
+    const timer = setTimeout(() => {
+      handleLogout();
+    }, timeout);
+    return () => clearTimeout(timer);
+  }, [handleLogout]);
 
   return (
     <nav className="navbar">
@@ -73,8 +125,20 @@ function Navbar() {
         </li>
       </ul>
       <div className="navbar-actions">
-        <button onClick={() => navigate('/login')}>로그인</button>
-        <button onClick={() => navigate('/signup-agreement')}>회원가입</button>
+        {isLoggedIn ? (
+          <>
+            <button onClick={() => navigate('/user-info')}>정보수정</button>
+            {isAdmin && (
+              <button onClick={() => navigate('/post-create')}>게시글 작성</button>
+            )}
+            <button onClick={handleLogout}>로그아웃</button>
+          </>
+        ) : (
+          <>
+            <button onClick={() => navigate('/login')}>로그인</button>
+            <button onClick={() => navigate('/signup-agreement')}>회원가입</button>
+          </>
+        )}
       </div>
     </nav>
   );

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { adminSignup } from '../../api/user';
 
 function AdminSignupPage() {
   const [form, setForm] = useState({
@@ -10,10 +12,25 @@ function AdminSignupPage() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => {
+      const updated = { ...prev, [name]: value };
+      // 비밀번호 또는 비밀번호 확인 입력 시 실시간 비교
+      if (
+        (name === 'password' || name === 'confirmPassword') &&
+        updated.confirmPassword &&
+        updated.password !== updated.confirmPassword
+      ) {
+        setPasswordError('비밀번호가 일치하지 않습니다.');
+      } else {
+        setPasswordError('');
+      }
+      return updated;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -24,34 +41,25 @@ function AdminSignupPage() {
       return;
     }
     if (form.password !== form.confirmPassword) {
-      setError('비밀번호가 일치하지 않습니다.');
-      setSuccess('');
-      return;
-    }
-    if (form.adminCode !== 'ADMIN2024') {
-      setError('어드민 코드가 올바르지 않습니다.');
-      setSuccess('');
+      setPasswordError('비밀번호가 일치하지 않습니다.');
+      setError('');
       return;
     }
     setError('');
+    setPasswordError('');
     setSuccess('');
     try {
-      const response = await fetch('http://localhost:8080/api/v1/users/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: form.email,
-          username: form.username,
-          password: form.password,
-        }),
+      const { status, message } = await adminSignup({
+        email: form.email,
+        username: form.username,
+        password: form.password,
+        adminCode: form.adminCode,
       });
-      const data = await response.json();
-      alert(data.message);
-      if (response.status === 201) {
+      alert(message);
+      if (status === 201) {
         setForm({ email: '', username: '', password: '', confirmPassword: '', adminCode: '' });
         setSuccess('어드민 회원가입이 완료되었습니다!');
+        navigate('/');
       }
     } catch (err) {
       setError('회원가입 요청 중 오류가 발생했습니다.');
@@ -71,6 +79,18 @@ function AdminSignupPage() {
             onChange={handleChange}
             style={{ width: '100%', padding: 10, border: '1px solid #ccc', borderRadius: 4 }}
             placeholder="이메일 입력"
+            required
+          />
+        </div>
+        <div style={{ marginBottom: 18 }}>
+          <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>이름</label>
+          <input
+            type="text"
+            name="username"
+            value={form.username}
+            onChange={handleChange}
+            style={{ width: '100%', padding: 10, border: '1px solid #ccc', borderRadius: 4 }}
+            placeholder="이름 입력"
             required
           />
         </div>
@@ -97,6 +117,7 @@ function AdminSignupPage() {
             placeholder="비밀번호 확인"
             required
           />
+          {passwordError && <div style={{ color: 'red', marginTop: 6 }}>{passwordError}</div>}
         </div>
         <div style={{ marginBottom: 18 }}>
           <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>어드민 코드</label>

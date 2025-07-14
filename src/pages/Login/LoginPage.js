@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../../api/user';
 
 function LoginPage() {
   const [form, setForm] = useState({
@@ -14,16 +15,32 @@ function LoginPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.email || !form.password) {
       setError('아이디(이메일)와 비밀번호를 입력해주세요.');
       return;
     }
     setError('');
-    // 실제 로그인 처리 로직은 추후 추가
-    alert('로그인 시도!');
-    navigate('/');
+    try {
+      const data = await login({
+        username: form.email,
+        password: form.password,
+      });
+      alert(data.message);
+      if (data.status === 200 && data.authorization) {
+        localStorage.setItem('Authorization', data.authorization);
+        localStorage.setItem('Refresh-Token', data.refreshToken);
+        if (data.role) {
+          localStorage.setItem('role', data.role);
+        } else {
+          localStorage.removeItem('role');
+        }
+        navigate('/');
+      }
+    } catch (err) {
+      setError('로그인 요청 중 오류가 발생했습니다.');
+    }
   };
 
   return (
