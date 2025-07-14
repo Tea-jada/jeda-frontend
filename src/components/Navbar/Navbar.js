@@ -2,6 +2,24 @@ import React from 'react';
 import './Navbar.css';
 import { useNavigate } from 'react-router-dom';
 
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
+
 function Navbar() {
   const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem('Authorization');
@@ -12,6 +30,23 @@ function Navbar() {
     localStorage.removeItem('Refresh-Token');
     navigate('/');
   };
+
+  React.useEffect(() => {
+    const token = localStorage.getItem('Authorization');
+    if (!token) return;
+    const payload = parseJwt(token);
+    if (!payload || !payload.exp) return;
+    const now = Math.floor(Date.now() / 1000);
+    if (payload.exp <= now) {
+      handleLogout();
+      return;
+    }
+    const timeout = (payload.exp - now) * 1000;
+    const timer = setTimeout(() => {
+      handleLogout();
+    }, timeout);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <nav className="navbar">
