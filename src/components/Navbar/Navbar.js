@@ -25,11 +25,11 @@ function Navbar() {
   const isLoggedIn = !!localStorage.getItem('Authorization');
   const isAdmin = localStorage.getItem('role') === 'ADMIN';
 
-  const handleLogout = () => {
+  const handleLogout = React.useCallback(() => {
     localStorage.removeItem('Authorization');
     localStorage.removeItem('Refresh-Token');
     navigate('/');
-  };
+  }, [navigate]);
 
   React.useEffect(() => {
     const token = localStorage.getItem('Authorization');
@@ -46,7 +46,7 @@ function Navbar() {
       handleLogout();
     }, timeout);
     return () => clearTimeout(timer);
-  }, []);
+  }, [handleLogout]);
 
   return (
     <nav className="navbar">
