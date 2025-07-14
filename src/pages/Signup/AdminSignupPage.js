@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { adminSignup } from '../../api/user';
 
 function AdminSignupPage() {
   const [form, setForm] = useState({
@@ -48,20 +49,14 @@ function AdminSignupPage() {
     setPasswordError('');
     setSuccess('');
     try {
-      const response = await fetch('http://localhost:8080/api/v1/users/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: form.email,
-          username: form.username,
-          password: form.password,
-        }),
+      const { status, message } = await adminSignup({
+        email: form.email,
+        username: form.username,
+        password: form.password,
+        adminCode: form.adminCode,
       });
-      const data = await response.json();
-      alert(data.message);
-      if (response.status === 201) {
+      alert(message);
+      if (status === 201) {
         setForm({ email: '', username: '', password: '', confirmPassword: '', adminCode: '' });
         setSuccess('어드민 회원가입이 완료되었습니다!');
         navigate('/');

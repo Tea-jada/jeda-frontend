@@ -20,4 +20,14 @@ export async function login({ username, password }) {
   const authorization = response.headers.get('Authorization');
   const refreshToken = response.headers.get('Refresh-Token');
   return { status: response.status, ...data, authorization, refreshToken };
+}
+
+export async function adminSignup({ email, username, password, adminCode }) {
+  const response = await fetch(`${API_BASE_URL}/api/v1/users/signup/admin`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, username, password, adminCode }),
+  });
+  const data = await response.json();
+  return { status: response.status, ...data };
 } 

@@ -22,8 +22,17 @@ function parseJwt(token) {
 
 function Navbar() {
   const navigate = useNavigate();
-  const isLoggedIn = !!localStorage.getItem('Authorization');
-  const isAdmin = localStorage.getItem('role') === 'ADMIN';
+  const token = localStorage.getItem('Authorization');
+  const isLoggedIn = !!token;
+  let isAdmin = false;
+  if (token) {
+    const payload = parseJwt(token);
+    console.log('JWT payload:', payload);
+    if (payload) {
+      console.log('JWT role:', payload.role);
+    }
+    isAdmin = payload && payload.role === 'ADMIN';
+  }
 
   const handleLogout = React.useCallback(() => {
     localStorage.removeItem('Authorization');
