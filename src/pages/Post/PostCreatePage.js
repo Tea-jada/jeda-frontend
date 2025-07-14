@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Color from '@tiptap/extension-color';
@@ -9,7 +8,7 @@ import Link from '@tiptap/extension-link';
 import Highlight from '@tiptap/extension-highlight';
 import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table';
 import { uploadPostImage } from '../../api/post';
-import { ResizableImage } from 'tiptap-extension-resizable-image';
+import { ResizableImage } from '../../extensions/ResizableImage';
 
 const categories = [
   '자유게시판',
@@ -100,7 +99,10 @@ function PostCreatePage() {
         setLoading(false);
         alert(result.message);
         if (result.status === 200 && result.data && result.data.imgUrl) {
-          editor.chain().focus().setResizableImage({ src: result.data.imgUrl }).run();
+          editor.chain().focus().insertContent({
+            type: 'resizableImage',
+            attrs: { src: result.data.imgUrl, width: 300, height: 200 }
+          }).run();
         } else {
           throw new Error(result.message || '이미지 업로드에 실패했습니다.');
         }
@@ -123,7 +125,53 @@ function PostCreatePage() {
   };
 
   return (
-    <div style={{ maxWidth: 700, margin: '60px auto', padding: 32, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
+    <div style={{ maxWidth: 700, margin: '60px auto', padding: 32, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', position: 'relative' }}>
+      {/* 핸들 스타일 추가 */}
+      <style>{`
+        .tiptap-resizable-image__handle {
+          position: absolute;
+          width: 12px;
+          height: 12px;
+          background: #fff;
+          border: 2px solid #2d7a2d;
+          border-radius: 50%;
+          z-index: 10;
+        }
+      `}</style>
+      {/* 전체 오버레이 */}
+      {loading && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(0,0,0,0.3)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          pointerEvents: 'auto',
+        }}>
+          <div style={{
+            background: '#fff',
+            padding: '32px 48px',
+            borderRadius: 12,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: '#2d7a2d',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 16,
+          }}>
+            <div className="spinner" style={{ width: 40, height: 40, border: '4px solid #eee', borderTop: '4px solid #2d7a2d', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+            이미지 업로드 중...
+          </div>
+          <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
+        </div>
+      )}
       <h2 style={{ textAlign: 'center', marginBottom: 32 }}>게시글 작성</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: 18 }}>
