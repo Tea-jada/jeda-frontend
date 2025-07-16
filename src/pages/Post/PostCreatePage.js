@@ -210,7 +210,12 @@ function PostCreatePage() {
           <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>본문</label>
           <MenuBar editor={editor} onImageUpload={handleImageUpload} />
           {loading && <div style={{ color: '#2d7a2d', marginBottom: 8 }}>이미지 업로드 중...</div>}
-          <EditorContent editor={editor} style={{ minHeight: 250, marginBottom: 20, border: '1px solid #ccc', borderRadius: 4, padding: 10 }} className="tiptap-editor" />
+          <div
+            style={{ minHeight: 250, marginBottom: 20, border: '1px solid #ccc', borderRadius: 4, padding: 10, cursor: 'text' }}
+            onClick={() => editor && editor.commands.focus()}
+          >
+            <EditorContent editor={editor} className="tiptap-editor" />
+          </div>
         </div>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
           <button type="button" onClick={handleCancel} style={{ padding: '10px 24px', background: '#eee', color: '#333', border: 'none', borderRadius: 4, fontWeight: 'bold', cursor: 'pointer' }}>취소</button>
