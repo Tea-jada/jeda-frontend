@@ -1,9 +1,26 @@
 import React, { useRef } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 
-export default function ResizableImageComponent({ node, updateAttributes, selected }) {
+export default function ResizableImageComponent({ node, updateAttributes, selected, editor, getPos }) {
   const { src, width, height, alt } = node.attrs;
   const imgRef = useRef();
+
+  // Wrapper 클릭 시 커서 이동
+  const onWrapperClick = (e) => {
+    // 이미지 DOM의 bounding box
+    const imgRect = imgRef.current?.getBoundingClientRect();
+    if (!imgRect) return;
+    // 클릭 위치가 이미지의 우측(오른쪽 바깥)일 때만 동작
+    if (e.clientX > imgRect.right) {
+      // getPos가 함수일 때만 사용
+      if (typeof getPos === 'function' && editor) {
+        const pos = getPos();
+        // 이미지 노드 다음 위치로 selection 이동
+        editor.commands.focus();
+        editor.commands.setTextSelection(pos + 1);
+      }
+    }
+  };
 
   // 핸들 드래그 이벤트 (방향별)
   const onHandleMouseDown = (direction) => (e) => {
@@ -92,7 +109,11 @@ export default function ResizableImageComponent({ node, updateAttributes, select
   ];
 
   return (
-    <NodeViewWrapper as="span" style={{ display: 'inline-block', position: 'relative', border: selected ? '2px solid #2d7a2d' : 'none' }}>
+    <NodeViewWrapper
+      as="span"
+      style={{ display: 'inline-block', position: 'relative', border: selected ? '2px solid #2d7a2d' : 'none' }}
+      onClick={onWrapperClick}
+    >
       <img
         ref={imgRef}
         src={src}
