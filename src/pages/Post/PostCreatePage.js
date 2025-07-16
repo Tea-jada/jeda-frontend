@@ -17,6 +17,8 @@ const categories = [
   '후기',
 ];
 
+// TODO: 이미지 리사이즈 버튼이 우측하단만 나옴, 이미지 위치를 옮길 수 없음, 이미지를 드래그하면 위치가 변경되는 게 아니라 복사가 됨.
+
 const MenuBar = ({ editor, onImageUpload }) => {
   if (!editor) return null;
   return (
