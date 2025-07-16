@@ -11,11 +11,25 @@ import { uploadPostImage } from '../../api/post';
 import { ResizableImage } from '../../extensions/ResizableImage';
 import './PostCreatePage.css';
 
-const categories = [
-  '자유게시판',
-  '공지사항',
-  '질문답변',
-  '후기',
+// 카테고리/서브카테고리 데이터
+const categoryData = [
+  {
+    name: '오피니언',
+    sub: [
+      '사설',
+      '칼럼',
+      '송강스님의 세계의 명차',
+      '세운스님의 차로 마음을 보다.',
+      '한남호목사의 차와 인문학',
+      '장미향선생의 제다이야기',
+      '김대호교수가 만난 차인과 제다인',
+    ],
+  },
+  { name: '차와 뉴스', sub: [] },
+  { name: '차와 문화', sub: [] },
+  { name: '차와 사람', sub: [] },
+  { name: '차의 세계', sub: [] },
+  { name: '차와 예술', sub: [] },
 ];
 
 // TODO: 이미지 리사이즈 버튼이 우측하단만 나옴, 이미지 위치를 옮길 수 없음, 이미지를 드래그하면 위치가 변경되는 게 아니라 복사가 됨.
@@ -64,7 +78,8 @@ const MenuBar = ({ editor, onImageUpload }) => {
 
 function PostCreatePage() {
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState(categories[0]);
+  const [category, setCategory] = useState(categoryData[0].name);
+  const [subCategory, setSubCategory] = useState(categoryData[0].sub[0] || '');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -116,6 +131,14 @@ function PostCreatePage() {
     };
     input.click();
   }, [editor]);
+
+  // 카테고리 변경 시 서브카테고리도 초기화
+  const handleCategoryChange = (e) => {
+    const selected = e.target.value;
+    setCategory(selected);
+    const found = categoryData.find(c => c.name === selected);
+    setSubCategory(found && found.sub.length > 0 ? found.sub[0] : '');
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -170,13 +193,28 @@ function PostCreatePage() {
           <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>카테고리</label>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            style={{ width: '100%', padding: 10, border: '1px solid #ccc', borderRadius: 4 }}
+            onChange={handleCategoryChange}
+            style={{ width: '100%', padding: 10, border: '1px solid #ccc', borderRadius: 4, marginBottom: 8 }}
           >
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
+            {categoryData.map(cat => (
+              <option key={cat.name} value={cat.name}>{cat.name}</option>
             ))}
           </select>
+          {/* 서브카테고리 드롭다운: 해당 카테고리에 서브카테고리가 있을 때만 표시 */}
+          {categoryData.find(c => c.name === category)?.sub.length > 0 && (
+            <>
+              <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>서브카테고리</label>
+              <select
+                value={subCategory}
+                onChange={e => setSubCategory(e.target.value)}
+                style={{ width: '100%', padding: 10, border: '1px solid #ccc', borderRadius: 4 }}
+              >
+                {categoryData.find(c => c.name === category).sub.map(sub => (
+                  <option key={sub} value={sub}>{sub}</option>
+                ))}
+              </select>
+            </>
+          )}
         </div>
         <div style={{ marginBottom: 18 }}>
           <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>제목</label>
