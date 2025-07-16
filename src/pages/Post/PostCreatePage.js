@@ -9,6 +9,7 @@ import Highlight from '@tiptap/extension-highlight';
 import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table';
 import { uploadPostImage } from '../../api/post';
 import { ResizableImage } from '../../extensions/ResizableImage';
+import './PostCreatePage.css';
 
 const categories = [
   '자유게시판',
@@ -129,24 +130,6 @@ function PostCreatePage() {
   return (
     <div style={{ maxWidth: 700, margin: '60px auto', padding: 32, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', position: 'relative' }}>
       {/* 핸들 스타일 추가 */}
-      <style>{`
-        .tiptap-resizable-image__handle {
-          position: absolute;
-          width: 12px;
-          height: 12px;
-          background: #fff;
-          border: 2px solid #2d7a2d;
-          border-radius: 50%;
-          z-index: 10;
-        }
-        /* 에디터 본문 줄간격/단락간격 조정 */
-        .tiptap-editor {
-          line-height: 1.5;
-        }
-        .tiptap-editor p {
-          margin: 0;
-        }
-      `}</style>
       {/* 전체 오버레이 */}
       {loading && (
         <div style={{

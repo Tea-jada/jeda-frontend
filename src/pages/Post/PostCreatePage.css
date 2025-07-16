@@ -1,0 +1,25 @@
+/* 에디터 리사이즈 핸들 스타일 */
+.tiptap-resizable-image__handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border: 2px solid #2d7a2d;
+  border-radius: 50%;
+  z-index: 10;
+}
+/* 에디터 본문 줄간격/단락간격 조정 */
+.tiptap-editor {
+  line-height: 1.5;
+}
+.tiptap-editor p {
+  margin: 0;
+}
+.tiptap-editor blockquote {
+  border-left: 4px solid #d0d0d0;
+  margin: 8px 0;
+  padding: 8px 16px;
+  color: #555;
+  background: #fafafa;
+  font-style: italic;
+}
