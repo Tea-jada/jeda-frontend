@@ -10,6 +10,24 @@ import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table
 import { uploadPostImage } from '../../api/post';
 import { ResizableImage } from '../../extensions/ResizableImage';
 import './PostCreatePage.css';
+import { Extension } from '@tiptap/core';
+
+// Enter 시 항상 새 줄을 paragraph로 만드는 커스텀 익스텐션
+const EnterAsParagraph = Extension.create({
+  name: 'enterAsParagraph',
+  addKeyboardShortcuts() {
+    return {
+      Enter: ({ editor }) => {
+        if (editor.isActive('heading') || editor.isActive('blockquote')) {
+          editor.commands.splitBlock();
+          editor.commands.setParagraph();
+          return true;
+        }
+        return false;
+      },
+    };
+  },
+});
 
 // 카테고리/서브카테고리 데이터
 const categoryData = [
@@ -144,6 +162,7 @@ function PostCreatePage() {
       TableRow,
       TableCell,
       TableHeader,
+      EnterAsParagraph, // ← 추가
     ],
     content,
     onUpdate: ({ editor }) => {
