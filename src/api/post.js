@@ -45,4 +45,21 @@ export async function postPost({ title, content, section, subSection, thumbnailU
   });
   const result = await response.json();
   return { status: response.status, ...result };
+}
+
+export async function getPostsByCategory(category) {
+  // section 매핑
+  const sectionMap = {
+    '오피니언': 'OPINION',
+    '차와 뉴스': 'TEA_AND_NEWS',
+    '차와 문화': 'TEA_AND_CULTURE',
+    '차와 사람': 'TEA_AND_PEAPLE',
+    '차의 세계': 'TEA_AND_WORLD',
+    '차와 예술': 'TEA_AND_ART',
+  };
+  const section = sectionMap[category] || 'OPINION';
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/section/${section}?page=0&size=10`);
+  if (!response.ok) return [];
+  const result = await response.json();
+  return result.data?.content || [];
 } 
