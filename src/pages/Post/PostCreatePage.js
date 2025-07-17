@@ -25,11 +25,56 @@ const categoryData = [
       '김대호교수가 만난 차인과 제다인',
     ],
   },
-  { name: '차와 뉴스', sub: [] },
-  { name: '차와 문화', sub: [] },
-  { name: '차와 사람', sub: [] },
-  { name: '차의 세계', sub: [] },
-  { name: '차와 예술', sub: [] },
+  {
+    name: '차와 뉴스',
+    sub: [
+      '차계',
+      '농업',
+      '산업',
+      '제다',
+      '단체 소식',
+    ],
+  },
+  {
+    name: '차와 문화',
+    sub: [
+      '교육',
+      '여행',
+      '학술',
+      '출판',
+    ],
+  },
+  {
+    name: '차와 사람',
+    sub: [
+      '차인',
+      '제다인',
+      '차공예인',
+      '티소믈리에',
+    ],
+  },
+  {
+    name: '차의 세계',
+    sub: [
+      '세계의 차',
+      '한국의 차',
+      '대용차',
+      '브랜딩차',
+      '티-가든',
+      '티-카페/티-하우스',
+    ],
+  },
+  {
+    name: '차와 예술',
+    sub: [
+      '전시',
+      '다례',
+      '도예',
+      '공예',
+      '공연',
+      '정원',
+    ],
+  },
 ];
 
 // TODO: 이미지 리사이즈 버튼이 우측하단만 나옴, 이미지 위치를 옮길 수 없음, 이미지를 드래그하면 위치가 변경되는 게 아니라 복사가 됨.
@@ -203,7 +248,7 @@ function PostCreatePage() {
           {/* 서브카테고리 드롭다운: 해당 카테고리에 서브카테고리가 있을 때만 표시 */}
           {categoryData.find(c => c.name === category)?.sub.length > 0 && (
             <>
-              <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>서브카테고리</label>
+              <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>서브 카테고리</label>
               <select
                 value={subCategory}
                 onChange={e => setSubCategory(e.target.value)}
