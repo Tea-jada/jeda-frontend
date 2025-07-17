@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
-import './ResizableImageComponent.css';
 
 export default function ResizableImageComponent({ node, updateAttributes, selected, editor, getPos }) {
   const { src, width, height, alt, align = 'left' } = node.attrs;
