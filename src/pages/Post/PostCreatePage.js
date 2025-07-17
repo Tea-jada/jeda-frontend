@@ -127,6 +127,9 @@ function PostCreatePage() {
   const [subCategory, setSubCategory] = useState(categoryData[0].sub[0] || '');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [thumbnail, setThumbnail] = useState(null); // 썸네일 파일
+  const [thumbnailPreview, setThumbnailPreview] = useState(''); // 썸네일 미리보기 URL
+  const [thumbnailUrl, setThumbnailUrl] = useState(''); // 서버 업로드된 썸네일 URL
 
   const editor = useEditor({
     extensions: [
@@ -177,6 +180,33 @@ function PostCreatePage() {
     input.click();
   }, [editor]);
 
+  // 썸네일 이미지 업로드 핸들러
+  const handleThumbnailChange = async (e) => {
+    // 파일 선택 취소 시 아무 동작도 하지 않음
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    if (file) {
+      setThumbnail(file);
+      setThumbnailPreview(URL.createObjectURL(file));
+      setLoading(true);
+      try {
+        const result = await uploadPostImage(file);
+        setLoading(false);
+        if (result.status === 200 && result.data && result.data.imgUrl) {
+          setThumbnailUrl(result.data.imgUrl);
+          setThumbnailPreview(result.data.imgUrl); // 서버 URL로 미리보기 교체
+        } else {
+          setThumbnailUrl('');
+          alert(result.message || '썸네일 업로드에 실패했습니다.');
+        }
+      } catch (err) {
+        setLoading(false);
+        setThumbnailUrl('');
+        alert(err.message || '썸네일 업로드 중 오류가 발생했습니다.');
+      }
+    }
+  };
+
   // 카테고리 변경 시 서브카테고리도 초기화
   const handleCategoryChange = (e) => {
     const selected = e.target.value;
@@ -187,7 +217,7 @@ function PostCreatePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: API 연동
+    // TODO: API 연동 시 thumbnailUrl을 함께 전송
     alert('게시글이 등록되었습니다!');
   };
 
@@ -271,6 +301,24 @@ function PostCreatePage() {
             placeholder="제목을 입력하세요"
             required
           />
+        </div>
+        {/* 썸네일 업로드 */}
+        <div style={{ marginBottom: 18 }}>
+          <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>썸네일 이미지</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleThumbnailChange}
+            style={{ marginBottom: 8 }}
+          />
+          {thumbnailPreview && (
+            <div style={{ marginTop: 8 }}>
+              <img src={thumbnailPreview} alt="썸네일 미리보기" style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 8, border: '1px solid #ccc' }} />
+              {thumbnailUrl && (
+                <div style={{ color: '#2d7a2d', fontSize: 12, marginTop: 4 }}>썸네일 업로드 완료</div>
+              )}
+            </div>
+          )}
         </div>
         <div style={{ marginBottom: 18 }}>
           <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>본문</label>
