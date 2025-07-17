@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
+import './ResizableImageComponent.css';
 
 export default function ResizableImageComponent({ node, updateAttributes, selected, editor, getPos }) {
-  const { src, width, height, alt } = node.attrs;
+  const { src, width, height, alt, align = 'left' } = node.attrs;
   const imgRef = useRef();
 
   // Wrapper 클릭 시 커서 이동
@@ -80,20 +81,7 @@ export default function ResizableImageComponent({ node, updateAttributes, select
   };
 
   // 핸들 스타일 공통 (작은 원형, 그림자 추가)
-  const handleStyle = {
-    position: 'absolute',
-    width: 10,
-    height: 10,
-    background: '#fff',
-    border: '2px solid #2d7a2d',
-    borderRadius: '50%',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
-    zIndex: 10,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 0,
-  };
+  // const handleStyle = { ... } // 삭제
 
   // 각 핸들 위치 및 커서 (이미지 바깥쪽 끝에 위치)
   const offset = -7; // 이미지 바깥쪽에 위치하도록 오프셋
@@ -111,14 +99,22 @@ export default function ResizableImageComponent({ node, updateAttributes, select
   return (
     <NodeViewWrapper
       as="span"
-      style={{ display: 'inline-block', position: 'relative', border: selected ? '2px solid #2d7a2d' : 'none' }}
+      className={`tiptap-resizable-image-wrapper${selected ? ' selected' : ''}`}
       onClick={onWrapperClick}
     >
+      {/* 정렬 버튼 삭제됨 */}
       <img
         ref={imgRef}
         src={src}
         alt={alt}
-        style={{ width, height, display: 'block', maxWidth: '100%' }}
+        style={{
+          width,
+          height,
+          display: 'block',
+          maxWidth: '100%',
+          marginLeft: align === 'center' ? 'auto' : align === 'right' ? 'auto' : 0,
+          marginRight: align === 'center' ? 'auto' : align === 'left' ? 'auto' : 0,
+        }}
         data-resizable-image="true"
         onDragStart={() => {
           if (typeof getPos === 'function') {
@@ -130,7 +126,8 @@ export default function ResizableImageComponent({ node, updateAttributes, select
       {selected && handles.map(h => (
         <span
           key={h.dir}
-          style={{ ...handleStyle, ...h.style }}
+          className={`tiptap-resizable-image__handle tiptap-resizable-image__handle--${h.dir}`}
+          style={h.style}
           onMouseDown={onHandleMouseDown(h.dir)}
         />
       ))}

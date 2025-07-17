@@ -242,50 +242,26 @@ function PostCreatePage() {
   };
 
   return (
-    <div style={{ maxWidth: 700, margin: '60px auto', padding: 32, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.07)', position: 'relative' }}>
+    <div className="post-create-wrapper">
       {/* 핸들 스타일 추가 */}
       {/* 전체 오버레이 */}
       {loading && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          background: 'rgba(0,0,0,0.3)',
-          zIndex: 9999,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          pointerEvents: 'auto',
-        }}>
-          <div style={{
-            background: '#fff',
-            padding: '32px 48px',
-            borderRadius: 12,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-            fontSize: 20,
-            fontWeight: 'bold',
-            color: '#2d7a2d',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 16,
-          }}>
-            <div className="spinner" style={{ width: 40, height: 40, border: '4px solid #eee', borderTop: '4px solid #2d7a2d', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        <div className="post-create-overlay">
+          <div className="post-create-overlay-content">
+            <div className="spinner" />
             이미지 업로드 중...
           </div>
           <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
         </div>
       )}
-      <h2 style={{ textAlign: 'center', marginBottom: 32 }}>게시글 작성</h2>
+      <h2 className="post-create-title">게시글 작성</h2>
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 18 }}>
-          <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>카테고리</label>
+        <div className="post-create-field">
+          <label className="post-create-label">카테고리</label>
           <select
             value={category}
             onChange={handleCategoryChange}
-            style={{ width: '100%', padding: 10, border: '1px solid #ccc', borderRadius: 4, marginBottom: 8 }}
+            className="post-create-select"
           >
             {categoryData.map(cat => (
               <option key={cat.name} value={cat.name}>{cat.name}</option>
@@ -294,11 +270,11 @@ function PostCreatePage() {
           {/* 서브카테고리 드롭다운: 해당 카테고리에 서브카테고리가 있을 때만 표시 */}
           {categoryData.find(c => c.name === category)?.sub.length > 0 && (
             <>
-              <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>서브 카테고리</label>
+              <label className="post-create-label">서브 카테고리</label>
               <select
                 value={subCategory}
                 onChange={e => setSubCategory(e.target.value)}
-                style={{ width: '100%', padding: 10, border: '1px solid #ccc', borderRadius: 4 }}
+                className="post-create-select"
               >
                 {categoryData.find(c => c.name === category).sub.map(sub => (
                   <option key={sub} value={sub}>{sub}</option>
@@ -307,49 +283,49 @@ function PostCreatePage() {
             </>
           )}
         </div>
-        <div style={{ marginBottom: 18 }}>
-          <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>제목</label>
+        <div className="post-create-field">
+          <label className="post-create-label">제목</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            style={{ width: '100%', padding: 10, border: '1px solid #ccc', borderRadius: 4 }}
+            className="post-create-input"
             placeholder="제목을 입력하세요"
             required
           />
         </div>
         {/* 썸네일 업로드 */}
-        <div style={{ marginBottom: 18 }}>
-          <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>썸네일 이미지</label>
+        <div className="post-create-field">
+          <label className="post-create-label">썸네일 이미지</label>
           <input
             type="file"
             accept="image/*"
             onChange={handleThumbnailChange}
-            style={{ marginBottom: 8 }}
+            className="post-create-file"
           />
           {thumbnailPreview && (
-            <div style={{ marginTop: 8 }}>
-              <img src={thumbnailPreview} alt="썸네일 미리보기" style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 8, border: '1px solid #ccc' }} />
+            <div className="post-create-thumbnail-preview-wrapper">
+              <img src={thumbnailPreview} alt="썸네일 미리보기" className="post-create-thumbnail-preview" />
               {thumbnailUrl && (
-                <div style={{ color: '#2d7a2d', fontSize: 12, marginTop: 4 }}>썸네일 업로드 완료</div>
+                <div className="post-create-thumbnail-success">썸네일 업로드 완료</div>
               )}
             </div>
           )}
         </div>
-        <div style={{ marginBottom: 18 }}>
-          <label style={{ display: 'block', marginBottom: 6, fontWeight: 'bold' }}>본문</label>
+        <div className="post-create-field">
+          <label className="post-create-label">본문</label>
           <MenuBar editor={editor} onImageUpload={handleImageUpload} />
-          {loading && <div style={{ color: '#2d7a2d', marginBottom: 8 }}>이미지 업로드 중...</div>}
+          {loading && <div className="post-create-loading">이미지 업로드 중...</div>}
           <div
-            style={{ minHeight: 250, marginBottom: 20, border: '1px solid #ccc', borderRadius: 4, padding: 10, cursor: 'text' }}
+            className="post-create-editor-wrapper"
             onClick={() => editor && editor.commands.focus()}
           >
             <EditorContent editor={editor} className="tiptap-editor" />
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-          <button type="button" onClick={handleCancel} style={{ padding: '10px 24px', background: '#eee', color: '#333', border: 'none', borderRadius: 4, fontWeight: 'bold', cursor: 'pointer' }}>취소</button>
-          <button type="submit" style={{ padding: '10px 24px', background: '#2d7a2d', color: '#fff', border: 'none', borderRadius: 4, fontWeight: 'bold', cursor: 'pointer' }}>등록</button>
+        <div className="post-create-actions">
+          <button type="button" onClick={handleCancel} className="post-create-cancel">취소</button>
+          <button type="submit" className="post-create-submit">등록</button>
         </div>
       </form>
     </div>
