@@ -145,7 +145,6 @@ function PostCreatePage() {
   const [subCategory, setSubCategory] = useState(categoryData[0].sub[0] || '');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
-  const [thumbnail, setThumbnail] = useState(null); // 썸네일 파일
   const [thumbnailPreview, setThumbnailPreview] = useState(''); // 썸네일 미리보기 URL
   const [thumbnailUrl, setThumbnailUrl] = useState(''); // 서버 업로드된 썸네일 URL
 
@@ -205,8 +204,6 @@ function PostCreatePage() {
     if (!e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
     if (file) {
-      setThumbnail(file);
-      setThumbnailPreview(URL.createObjectURL(file));
       setLoading(true);
       try {
         const result = await uploadPostImage(file);
