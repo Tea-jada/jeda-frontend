@@ -23,3 +23,10 @@
   background: #fafafa;
   font-style: italic;
 }
+.tiptap-editor h1,
+.tiptap-editor h2,
+.tiptap-editor h3,
+.tiptap-editor h4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
