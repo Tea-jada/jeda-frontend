@@ -4,6 +4,7 @@ import UserInfoPage from './pages/Signup/UserInfoPage';
 import LoginPage from './pages/Login/LoginPage';
 import AdminSignupPage from './pages/Signup/AdminSignupPage';
 import PostCreatePage from './pages/Post/PostCreatePage';
+import PostListPage from './pages/Post/PostListPage';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 
@@ -23,6 +24,7 @@ function App() {
         <Route path="/signup/user-info" element={<UserInfoPage />} />
         <Route path="/admin-signup" element={<AdminSignupPage />} />
         <Route path="/post-create" element={<PostCreatePage />} />
+        <Route path="/posts" element={<PostListPage />} />
       </Routes>
     </Router>
   );

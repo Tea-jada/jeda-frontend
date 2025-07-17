@@ -40,6 +40,11 @@ function Navbar() {
     navigate('/');
   }, [navigate]);
 
+  // 카테고리 클릭 시 이동
+  const handleCategoryClick = (category) => {
+    navigate(`/posts?category=${encodeURIComponent(category)}`);
+  };
+
   React.useEffect(() => {
     const token = localStorage.getItem('Authorization');
     if (!token) return;
@@ -61,7 +66,7 @@ function Navbar() {
     <nav className="navbar">
       <div className="navbar-logo">제다</div>
       <ul className="navbar-menu">
-        <li className="navbar-item">
+        <li className="navbar-item" onClick={() => handleCategoryClick('오피니언')}>
           오피니언
           <ul className="dropdown-menu">
             <li>사설</li>
@@ -73,7 +78,7 @@ function Navbar() {
             <li>김대호교수가 만난 차인과 제다인</li>
           </ul>
         </li>
-        <li className="navbar-item">
+        <li className="navbar-item" onClick={() => handleCategoryClick('차와 뉴스')}>
           차와 뉴스
           <ul className="dropdown-menu">
             <li>차계</li>
@@ -83,7 +88,7 @@ function Navbar() {
             <li>단체 소식</li>
           </ul>
         </li>
-        <li className="navbar-item">
+        <li className="navbar-item" onClick={() => handleCategoryClick('차와 문화')}>
           차와 문화
           <ul className="dropdown-menu">
             <li>교육</li>
@@ -92,7 +97,7 @@ function Navbar() {
             <li>출판</li>
           </ul>
         </li>
-        <li className="navbar-item">
+        <li className="navbar-item" onClick={() => handleCategoryClick('차와 사람')}>
           차와 사람
           <ul className="dropdown-menu">
             <li>차인</li>
@@ -101,7 +106,7 @@ function Navbar() {
             <li>티소믈리에</li>
           </ul>
         </li>
-        <li className="navbar-item">
+        <li className="navbar-item" onClick={() => handleCategoryClick('차의 세계')}>
           차의 세계
           <ul className="dropdown-menu">
             <li>세계의 차</li>
@@ -112,7 +117,7 @@ function Navbar() {
             <li>티-카페/티-하우스</li>
           </ul>
         </li>
-        <li className="navbar-item">
+        <li className="navbar-item" onClick={() => handleCategoryClick('차와 예술')}>
           차와 예술
           <ul className="dropdown-menu">
             <li>전시</li>
