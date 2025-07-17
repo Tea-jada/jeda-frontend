@@ -7,7 +7,7 @@ import Color from '@tiptap/extension-color';
 import Link from '@tiptap/extension-link';
 import Highlight from '@tiptap/extension-highlight';
 import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table';
-import { uploadPostImage } from '../../api/post';
+import { uploadPostImage, postPost } from '../../api/post';
 import { ResizableImage } from '../../extensions/ResizableImage';
 import './PostCreatePage.css';
 import { Extension } from '@tiptap/core';
@@ -231,10 +231,30 @@ function PostCreatePage() {
     setSubCategory(found && found.sub.length > 0 ? found.sub[0] : '');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: API 연동 시 thumbnailUrl을 함께 전송
-    alert('게시글이 등록되었습니다!');
+    // section, subSection 매핑
+    const section = category;
+    const subSectionIdx = categoryData.find(c => c.name === category)?.sub.findIndex(s => s === subCategory) ?? 0;
+    const token = localStorage.getItem('Authorization');
+    try {
+      const result = await postPost({
+        title,
+        content,
+        section,
+        subSection: subSectionIdx,
+        thumbnailUrl,
+        token,
+      });
+      if (result.status === 200 || result.status === 201) {
+        alert('게시글이 등록되었습니다!');
+        window.location.href = '/';
+      } else {
+        alert(result.message || '게시글 등록에 실패했습니다.');
+      }
+    } catch (err) {
+      alert(err.message || '게시글 등록 중 오류가 발생했습니다.');
+    }
   };
 
   const handleCancel = () => {
