@@ -120,6 +120,11 @@ export default function ResizableImageComponent({ node, updateAttributes, select
         alt={alt}
         style={{ width, height, display: 'block', maxWidth: '100%' }}
         data-resizable-image="true"
+        onDragStart={() => {
+          if (typeof getPos === 'function') {
+            window._draggedImagePos = getPos();
+          }
+        }}
       />
       {/* 8방향 리사이즈 핸들 */}
       {selected && handles.map(h => (
