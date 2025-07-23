@@ -64,7 +64,7 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <div className="navbar-logo">제다</div>
+      <div className="navbar-logo" onClick={() => navigate('/')}>제다</div>
       <ul className="navbar-menu">
         <li className="navbar-item" onClick={() => handleCategoryClick('오피니언')}>
           오피니언
