@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getPostsByCategory } from '../../api/post';
+import MainLayout from '../../components/MainLayout';
 import './PostListPage.css';
 
 function formatDate(dateStr) {
@@ -69,28 +70,30 @@ export default function PostListPage() {
   }, [category]);
 
   return (
-    <div className="post-list-wrapper">
-      <h2 className="post-list-title">{category} 게시글</h2>
-      {loading ? (
-        <div className="post-list-loading">로딩 중...</div>
-      ) : posts.length === 0 ? (
-        <div className="post-list-empty">게시글이 없습니다.</div>
-      ) : (
-        <div className="post-list">
-          {posts.map(post => (
-            <div className="post-card" key={post.id}>
-              <img src={post.thumbnailUrl} alt="썸네일" className="post-thumbnail" />
-              <div className="post-meta">
-                <span className="post-subcategory">{getSubCategoryName(category, post.subSection)}</span>
-                <span className="post-author">김우진</span>
-                <span className="post-date">{formatDate(post.updatedAt)}</span>
+    <MainLayout>
+      <div className="post-list-wrapper">
+        <h2 className="post-list-title">{category} 게시글</h2>
+        {loading ? (
+          <div className="post-list-loading">로딩 중...</div>
+        ) : posts.length === 0 ? (
+          <div className="post-list-empty">게시글이 없습니다.</div>
+        ) : (
+          <div className="post-list">
+            {posts.map(post => (
+              <div className="post-card" key={post.id}>
+                <img src={post.thumbnailUrl} alt="썸네일" className="post-thumbnail" />
+                <div className="post-meta">
+                  <span className="post-subcategory">{getSubCategoryName(category, post.subSection)}</span>
+                  <span className="post-author">김우진</span>
+                  <span className="post-date">{formatDate(post.updatedAt)}</span>
+                </div>
+                <h3 className="post-title">{post.title}</h3>
+                <p className="post-summary">{getTwoLineSummary(extractTextFromHtml(post.content))}</p>
               </div>
-              <h3 className="post-title">{post.title}</h3>
-              <p className="post-summary">{getTwoLineSummary(extractTextFromHtml(post.content))}</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </MainLayout>
   );
 } 
