@@ -46,7 +46,7 @@
 }
 
 .navbar-item:hover > .dropdown-menu {
-  display: block;
+  /* display: block; (JS에서 제어) */
 }
 
 .dropdown-menu li {
