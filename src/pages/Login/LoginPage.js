@@ -8,6 +8,7 @@ function LoginPage() {
     password: '',
   });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -22,6 +23,7 @@ function LoginPage() {
       return;
     }
     setError('');
+    setIsLoading(true);
     try {
       const data = await login({
         username: form.email,
@@ -40,11 +42,31 @@ function LoginPage() {
       }
     } catch (err) {
       setError('로그인 요청 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div style={{ maxWidth: 400, margin: '60px auto', padding: 32, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
+      {isLoading && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+          color: 'white',
+          fontSize: '24px'
+        }}>
+          로그인 중입니다...
+        </div>
+      )}
       <h2 style={{ textAlign: 'center', marginBottom: 32 }}>로그인</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: 18 }}>
@@ -84,4 +106,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage; 
+export default LoginPage;
