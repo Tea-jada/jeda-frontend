@@ -1,12 +1,10 @@
 import React from 'react';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
+import MainLayout from '../../components/MainLayout';
 import './Home.css';
 
 function Home() {
   return (
-    <div className="main-wrapper">
-      <Navbar />
+    <MainLayout>
       <header className="main-header">
         <h1>티라운지에서 느끼는 모던티의 향연</h1>
         <p>올 여름 모던티의 향미에 빠져볼 수 있는 티라운지가 선보여 화제가 되고 있다...</p>
@@ -29,8 +27,7 @@ function Home() {
           </ol>
         </aside>
       </main>
-      <Footer />
-    </div>
+    </MainLayout>
   );
 }
 

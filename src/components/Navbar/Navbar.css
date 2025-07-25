@@ -15,6 +15,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   color: #2e473b;
+  cursor: pointer;
 }
 
 .navbar-menu {
@@ -45,7 +46,7 @@
 }
 
 .navbar-item:hover > .dropdown-menu {
-  display: block;
+  /* display: block; (JS에서 제어) */
 }
 
 .dropdown-menu li {

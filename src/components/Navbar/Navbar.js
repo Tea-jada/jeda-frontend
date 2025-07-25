@@ -34,6 +34,16 @@ function Navbar() {
     isAdmin = payload && payload.role === 'ADMIN';
   }
 
+  // 드롭다운 상태 관리 (hover용)
+  const [openDropdown, setOpenDropdown] = React.useState(null);
+
+  const handleDropdownMouseEnter = (category) => {
+    setOpenDropdown(category);
+  };
+  const handleDropdownMouseLeave = () => {
+    setOpenDropdown(null);
+  };
+
   const handleLogout = React.useCallback(() => {
     localStorage.removeItem('Authorization');
     localStorage.removeItem('Refresh-Token');
@@ -43,6 +53,12 @@ function Navbar() {
   // 카테고리 클릭 시 이동
   const handleCategoryClick = (category) => {
     navigate(`/posts?category=${encodeURIComponent(category)}`);
+  };
+
+  // 서브카테고리 클릭 시 이동 및 드롭다운 닫기
+  const handleSubCategoryClick = (category, subCategory) => {
+    navigate(`/posts/sub?category=${encodeURIComponent(category)}&sub=${encodeURIComponent(subCategory)}`);
+    setOpenDropdown(null);
   };
 
   React.useEffect(() => {
@@ -64,68 +80,92 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <div className="navbar-logo">제다</div>
+      <div className="navbar-logo" onClick={() => navigate('/')}>제다</div>
       <ul className="navbar-menu">
-        <li className="navbar-item" onClick={() => handleCategoryClick('오피니언')}>
+        <li className="navbar-item"
+            onMouseEnter={() => handleDropdownMouseEnter('오피니언')}
+            onMouseLeave={handleDropdownMouseLeave}
+            onClick={() => handleCategoryClick('오피니언')}
+        >
           오피니언
-          <ul className="dropdown-menu">
-            <li>사설</li>
-            <li>칼럼</li>
-            <li>송강스님의 세계의 명차</li>
-            <li>세운스님의 차로 마음을 보다</li>
-            <li>한남호목사의 차와 인문학</li>
-            <li>장미향선생의 제다이야기</li>
-            <li>김대호교수가 만난 차인과 제다인</li>
+          <ul className="dropdown-menu" style={{ display: openDropdown === '오피니언' ? 'block' : 'none' }}>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('오피니언', '사설'); }}>사설</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('오피니언', '칼럼'); }}>칼럼</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('오피니언', '송강스님의 세계의 명차'); }}>송강스님의 세계의 명차</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('오피니언', '세운스님의 차로 마음을 보다'); }}>세운스님의 차로 마음을 보다</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('오피니언', '한남호목사의 차와 인문학'); }}>한남호목사의 차와 인문학</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('오피니언', '장미향선생의 제다이야기'); }}>장미향선생의 제다이야기</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('오피니언', '김대호교수가 만난 차인과 제다인'); }}>김대호교수가 만난 차인과 제다인</li>
           </ul>
         </li>
-        <li className="navbar-item" onClick={() => handleCategoryClick('차와 뉴스')}>
+        <li className="navbar-item"
+            onMouseEnter={() => handleDropdownMouseEnter('차와 뉴스')}
+            onMouseLeave={handleDropdownMouseLeave}
+            onClick={() => handleCategoryClick('차와 뉴스')}
+        >
           차와 뉴스
-          <ul className="dropdown-menu">
-            <li>차계</li>
-            <li>농업</li>
-            <li>산업</li>
-            <li>제다</li>
-            <li>단체 소식</li>
+          <ul className="dropdown-menu" style={{ display: openDropdown === '차와 뉴스' ? 'block' : 'none' }}>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 뉴스', '차계'); }}>차계</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 뉴스', '농업'); }}>농업</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 뉴스', '산업'); }}>산업</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 뉴스', '제다'); }}>제다</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 뉴스', '단체 소식'); }}>단체 소식</li>
           </ul>
         </li>
-        <li className="navbar-item" onClick={() => handleCategoryClick('차와 문화')}>
+        <li className="navbar-item"
+            onMouseEnter={() => handleDropdownMouseEnter('차와 문화')}
+            onMouseLeave={handleDropdownMouseLeave}
+            onClick={() => handleCategoryClick('차와 문화')}
+        >
           차와 문화
-          <ul className="dropdown-menu">
-            <li>교육</li>
-            <li>여행</li>
-            <li>학술</li>
-            <li>출판</li>
+          <ul className="dropdown-menu" style={{ display: openDropdown === '차와 문화' ? 'block' : 'none' }}>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 문화', '교육'); }}>교육</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 문화', '여행'); }}>여행</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 문화', '학술'); }}>학술</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 문화', '출판'); }}>출판</li>
           </ul>
         </li>
-        <li className="navbar-item" onClick={() => handleCategoryClick('차와 사람')}>
+        <li className="navbar-item"
+            onMouseEnter={() => handleDropdownMouseEnter('차와 사람')}
+            onMouseLeave={handleDropdownMouseLeave}
+            onClick={() => handleCategoryClick('차와 사람')}
+        >
           차와 사람
-          <ul className="dropdown-menu">
-            <li>차인</li>
-            <li>제다인</li>
-            <li>차공예인</li>
-            <li>티소믈리에</li>
+          <ul className="dropdown-menu" style={{ display: openDropdown === '차와 사람' ? 'block' : 'none' }}>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 사람', '차인'); }}>차인</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 사람', '제다인'); }}>제다인</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 사람', '차공예인'); }}>차공예인</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 사람', '티소믈리에'); }}>티소믈리에</li>
           </ul>
         </li>
-        <li className="navbar-item" onClick={() => handleCategoryClick('차의 세계')}>
+        <li className="navbar-item"
+            onMouseEnter={() => handleDropdownMouseEnter('차의 세계')}
+            onMouseLeave={handleDropdownMouseLeave}
+            onClick={() => handleCategoryClick('차의 세계')}
+        >
           차의 세계
-          <ul className="dropdown-menu">
-            <li>세계의 차</li>
-            <li>한국의 차</li>
-            <li>대용차</li>
-            <li>브랜딩차</li>
-            <li>티-가든</li>
-            <li>티-카페/티-하우스</li>
+          <ul className="dropdown-menu" style={{ display: openDropdown === '차의 세계' ? 'block' : 'none' }}>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차의 세계', '세계의 차'); }}>세계의 차</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차의 세계', '한국의 차'); }}>한국의 차</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차의 세계', '대용차'); }}>대용차</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차의 세계', '브랜딩차'); }}>브랜딩차</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차의 세계', '티-가든'); }}>티-가든</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차의 세계', '티-카페/티-하우스'); }}>티-카페/티-하우스</li>
           </ul>
         </li>
-        <li className="navbar-item" onClick={() => handleCategoryClick('차와 예술')}>
+        <li className="navbar-item"
+            onMouseEnter={() => handleDropdownMouseEnter('차와 예술')}
+            onMouseLeave={handleDropdownMouseLeave}
+            onClick={() => handleCategoryClick('차와 예술')}
+        >
           차와 예술
-          <ul className="dropdown-menu">
-            <li>전시</li>
-            <li>다례</li>
-            <li>도예</li>
-            <li>공예</li>
-            <li>공연</li>
-            <li>정원</li>
+          <ul className="dropdown-menu" style={{ display: openDropdown === '차와 예술' ? 'block' : 'none' }}>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 예술', '전시'); }}>전시</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 예술', '다례'); }}>다례</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 예술', '도예'); }}>도예</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 예술', '공예'); }}>공예</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 예술', '공연'); }}>공연</li>
+            <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 예술', '정원'); }}>정원</li>
           </ul>
         </li>
       </ul>
