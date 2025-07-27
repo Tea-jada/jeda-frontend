@@ -91,4 +91,11 @@ export async function getPostsByCategoryAndSub(category, subCategory) {
   if (!response.ok) return [];
   const result = await response.json();
   return result.data?.content || [];
+}
+
+export async function getPostById(postId) {
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}`);
+  if (!response.ok) return null;
+  const result = await response.json();
+  return result.data;
 } 

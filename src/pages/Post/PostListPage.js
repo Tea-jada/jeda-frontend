@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { getPostsByCategory } from '../../api/post';
 import MainLayout from '../../components/MainLayout';
 import './PostListPage.css';
@@ -80,16 +80,18 @@ export default function PostListPage() {
         ) : (
           <div className="post-list">
             {posts.map(post => (
-              <div className="post-card" key={post.id}>
-                <img src={post.thumbnailUrl} alt="썸네일" className="post-thumbnail" />
-                <div className="post-meta">
-                  <span className="post-subcategory">{getSubCategoryName(category, post.subSection)}</span>
-                  <span className="post-author">김우진</span>
-                  <span className="post-date">{formatDate(post.updatedAt)}</span>
+              <Link to={`/post/${post.id}`} key={post.id} className="post-card-link">
+                <div className="post-card">
+                  <img src={post.thumbnailUrl} alt="썸네일" className="post-thumbnail" />
+                  <div className="post-meta">
+                    <span className="post-subcategory">{getSubCategoryName(category, post.subSection)}</span>
+                    <span className="post-author">김우진</span>
+                    <span className="post-date">{formatDate(post.updatedAt)}</span>
+                  </div>
+                  <h3 className="post-title">{post.title}</h3>
+                  <p className="post-summary">{getTwoLineSummary(extractTextFromHtml(post.content))}</p>
                 </div>
-                <h3 className="post-title">{post.title}</h3>
-                <p className="post-summary">{getTwoLineSummary(extractTextFromHtml(post.content))}</p>
-              </div>
+              </Link>
             ))}
           </div>
         )}
