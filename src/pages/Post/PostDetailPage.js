@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { getPostById } from '../../api/post';
 import MainLayout from '../../components/MainLayout';
 import './PostDetailPage.css';
@@ -54,6 +55,7 @@ function getSubSectionKor(sectionEng, subSectionEng) {
 
 export default function PostDetailPage() {
   const { postId } = useParams();
+  const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -101,6 +103,10 @@ export default function PostDetailPage() {
               <div className="tea-news-meta">
                 <span className="tea-news-author">김우진 기자</span>
                 <span className="tea-news-email">teac21@naver.com</span>
+              </div>
+              <div className="tea-news-actions">
+                <button onClick={() => navigate(`/post/edit/${postId}`)}>수정</button>
+                <button>삭제</button>
               </div>
               <div className="tea-news-breadcrumb">
                 <span>홈</span> &gt; <span>게시글</span>
