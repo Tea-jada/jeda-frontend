@@ -12,6 +12,7 @@ import Link from '@tiptap/extension-link';
 import Highlight from '@tiptap/extension-highlight';
 import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table';
 import { Extension } from '@tiptap/core';
+import { ResizableImage } from '../../extensions/ResizableImage';
 
 // Enter 시 항상 새 줄을 paragraph로 만드는 커스텀 익스텐션
 const EnterAsParagraph = Extension.create({
@@ -112,6 +113,7 @@ function PostEditPage() {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      ResizableImage,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Underline,
       Color,
@@ -157,11 +159,13 @@ function PostEditPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    const token = localStorage.getItem('Authorization');
     try {
       const response = await fetch(`http://localhost:8080/api/v1/posts/${postId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { Authorization: token } : {}),
         },
         body: JSON.stringify({
           title,
