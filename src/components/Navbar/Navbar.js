@@ -91,7 +91,12 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="nav-header">
-        <div className="navbar-logo" onClick={() => navigate('/')}>제다</div>
+        <img 
+          className="navbar-logo" 
+          src="https://res.cloudinary.com/dy25l3y1v/image/upload/v1753809546/%EC%A0%9C%EB%8B%A4_%ED%8B%B0%EB%A1%9C%EA%B3%A0_%EB%94%94%EC%9E%90%EC%9D%B8-removebg-preview_ffvopy.png"
+          alt="제다 로고"
+          onClick={() => navigate('/')}
+        />
         <form className="search-bar" onSubmit={handleSearch}>
           <input
             type="text"
