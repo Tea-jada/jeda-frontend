@@ -115,8 +115,8 @@ export default function PostDetailPage() {
             <>
               <h1 className="tea-news-title">{post.title}</h1>
               <div className="tea-news-meta">
-                <span className="tea-news-author">김우진 기자</span>
-                <span className="tea-news-email">teac21@naver.com</span>
+                <span className="tea-news-author">{post.username} 기자</span>
+                <span className="tea-news-email">{post.email}</span>
               </div>
               {isOwner && (
                 <div className="tea-news-actions">
