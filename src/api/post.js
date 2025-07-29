@@ -98,4 +98,15 @@ export async function getPostById(postId) {
   if (!response.ok) return null;
   const result = await response.json();
   return result.data;
+}
+
+export async function deletePost(postId) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': token,
+    },
+  });
+  return response;
 } 

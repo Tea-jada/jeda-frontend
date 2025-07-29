@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { getPostById } from '../../api/post';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getPostById, deletePost } from '../../api/post';
 import MainLayout from '../../components/MainLayout';
 import './PostDetailPage.css';
 
@@ -67,8 +67,14 @@ function getUsernameFromToken() {
 export default function PostDetailPage() {
   const { postId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const category = query.get('category');
+  const sub = query.get('sub');
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const userEmail = getUsernameFromToken();
   const isOwner = userEmail && post?.email && userEmail === post.email;
@@ -103,6 +109,17 @@ export default function PostDetailPage() {
   const sectionKor = post?.section ? SECTION_MAP[post.section] || post.section : '';
   const subSectionKor = post?.subSection ? getSubSectionKor(post.section, post.subSection) : '';
 
+  async function handleDelete() {
+    setDeleting(true);
+    try {
+      await deletePost(postId);
+      navigate('/');
+    } catch (e) {
+      alert('삭제에 실패했습니다.');
+      setDeleting(false);
+    }
+  }
+
   return (
     <MainLayout>
       <div className="tea-news-grid">
@@ -121,7 +138,7 @@ export default function PostDetailPage() {
               {isOwner && (
                 <div className="tea-news-actions">
                   <button onClick={() => navigate(`/post/edit/${postId}`)}>수정</button>
-                  <button>삭제</button>
+                  <button onClick={() => setShowDeleteModal(true)}>삭제</button>
                 </div>
               )}
               <div className="tea-news-breadcrumb">
@@ -154,6 +171,18 @@ export default function PostDetailPage() {
           </div>
         </aside>
       </div>
+      {/* 삭제 확인 모달 */}
+      {showDeleteModal && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <p>정말 삭제하시겠습니까?</p>
+            <div className="modal-actions">
+              <button onClick={handleDelete} disabled={deleting}>삭제</button>
+              <button onClick={() => setShowDeleteModal(false)} disabled={deleting}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 }
