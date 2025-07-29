@@ -53,11 +53,25 @@ function getSubSectionKor(sectionEng, subSectionEng) {
   return arr[idx];
 }
 
+function getUsernameFromToken() {
+  const token = localStorage.getItem('Authorization');
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.username; // 또는 payload.email, 실제 JWT 구조에 맞게 수정
+  } catch {
+    return null;
+  }
+}
+
 export default function PostDetailPage() {
   const { postId } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const userEmail = getUsernameFromToken();
+  const isOwner = userEmail && post?.email && userEmail === post.email;
 
   // mock data for sidebar
   const mainArticles = [
@@ -104,10 +118,12 @@ export default function PostDetailPage() {
                 <span className="tea-news-author">김우진 기자</span>
                 <span className="tea-news-email">teac21@naver.com</span>
               </div>
-              <div className="tea-news-actions">
-                <button onClick={() => navigate(`/post/edit/${postId}`)}>수정</button>
-                <button>삭제</button>
-              </div>
+              {isOwner && (
+                <div className="tea-news-actions">
+                  <button onClick={() => navigate(`/post/edit/${postId}`)}>수정</button>
+                  <button>삭제</button>
+                </div>
+              )}
               <div className="tea-news-breadcrumb">
                 <span>홈</span> &gt; <span>게시글</span>
                 {sectionKor && <><span>&gt;</span><span>{sectionKor}</span></>}
