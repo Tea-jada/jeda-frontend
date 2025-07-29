@@ -59,7 +59,7 @@ const MenuBar = ({ editor, onImageUpload }) => {
       </select>
       <button type="button" onClick={() => editor.chain().focus().toggleBold().run()}><b>B</b></button>
       <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()}><i>I</i></button>
-      <button type="button" onClick={() => editor.chain().focus().toggleStrike().run()}><s>S</s></button>
+      <button type="button" onClick={() => editor.chain().focus().toggleStrike().run()}>S</button>
       <button type="button" onClick={() => editor.chain().focus().toggleBlockquote().run()}>“인용구”</button>
       <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()}>• 리스트</button>
       <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()}>1. 리스트</button>
@@ -72,7 +72,7 @@ const MenuBar = ({ editor, onImageUpload }) => {
   );
 };
 
-// 이미지 업로드 및 본문 삽입 핸들러 (PostCreatePage.js에서 복사)
+// 이미지 업로드 및 본문 삽입 핸들러 (PostCreatePage.js와 동일하게)
 function useImageUpload(editor, setLoading) {
   return useCallback(() => {
     const input = document.createElement('input');
@@ -140,9 +140,13 @@ function PostEditPage() {
       try {
         const data = await getPostById(postId);
         setTitle(data.title);
-        setContent(data.content);
+        let fixedContent = data.content?.replace(
+          /<img((?:(?!data-resizable-image)[^>])*)>/g,
+          '<img data-resizable-image="true"$1>'
+        );
+        setContent(fixedContent);
         if (editor) {
-          editor.commands.setContent(data.content || '');
+          editor.commands.setContent(fixedContent || '');
         }
       } catch (err) {
         alert('게시글 정보를 불러오지 못했습니다.');
