@@ -109,4 +109,16 @@ export async function deletePost(postId) {
     },
   });
   return response;
+}
+
+export async function searchPosts(keyword, page = 0, size = 10) {
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${size}`);
+  if (!response.ok) return { content: [], totalPages: 0, totalElements: 0 };
+  const result = await response.json();
+  return {
+    content: result.data?.content || [],
+    totalPages: result.data?.totalPages || 0,
+    totalElements: result.data?.totalElements || 0,
+    currentPage: result.data?.number || 0
+  };
 } 
