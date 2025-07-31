@@ -47,7 +47,7 @@ export async function postPost({ title, content, section, subSection, thumbnailU
   return { status: response.status, ...result };
 }
 
-export async function getPostsByCategory(category) {
+export async function getPostsByCategory(category, page = 0, size = 10) {
   // section 매핑
   const sectionMap = {
     '오피니언': 'OPINION',
@@ -58,10 +58,15 @@ export async function getPostsByCategory(category) {
     '차와 예술': 'TEA_AND_ART',
   };
   const section = sectionMap[category] || 'OPINION';
-  const response = await fetch(`${API_BASE_URL}/api/v1/posts/section/${section}?page=0&size=10`);
-  if (!response.ok) return [];
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/section/${section}?page=${page}&size=${size}`);
+  if (!response.ok) return { content: [], totalPages: 0, totalElements: 0 };
   const result = await response.json();
-  return result.data?.content || [];
+  return {
+    content: result.data?.content || [],
+    totalPages: result.data?.totalPages || 0,
+    totalElements: result.data?.totalElements || 0,
+    currentPage: result.data?.number || 0
+  };
 }
 
 export async function getPostsByCategoryAndSub(category, subCategory) {
@@ -91,4 +96,34 @@ export async function getPostsByCategoryAndSub(category, subCategory) {
   if (!response.ok) return [];
   const result = await response.json();
   return result.data?.content || [];
+}
+
+export async function getPostById(postId) {
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}`);
+  if (!response.ok) return null;
+  const result = await response.json();
+  return result.data;
+}
+
+export async function deletePost(postId) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': token,
+    },
+  });
+  return response;
+}
+
+export async function searchPosts(keyword, page = 0, size = 10) {
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${size}`);
+  if (!response.ok) return { content: [], totalPages: 0, totalElements: 0 };
+  const result = await response.json();
+  return {
+    content: result.data?.content || [],
+    totalPages: result.data?.totalPages || 0,
+    totalElements: result.data?.totalElements || 0,
+    currentPage: result.data?.number || 0
+  };
 } 

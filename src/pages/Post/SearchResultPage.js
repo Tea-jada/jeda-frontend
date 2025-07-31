@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { getPostsByCategory } from '../../api/post';
+import { searchPosts } from '../../api/post';
 import MainLayout from '../../components/MainLayout';
-import './PostListPage.css';
+import './SearchResultPage.css';
 
 function formatDateTime(dateStr) {
   const d = new Date(dateStr);
@@ -55,7 +55,18 @@ const subSectionMapByCategory = {
   ],
 };
 
-function getSubCategoryName(category, subSection) {
+// section을 카테고리명으로 변환
+const sectionToCategoryMap = {
+  'OPINION': '오피니언',
+  'TEA_AND_NEWS': '차와 뉴스',
+  'TEA_AND_CULTURE': '차와 문화',
+  'TEA_AND_PEAPLE': '차와 사람',
+  'TEA_AND_WORLD': '차의 세계',
+  'TEA_AND_ART': '차와 예술',
+};
+
+function getSubCategoryName(section, subSection) {
+  const category = sectionToCategoryMap[section] || '오피니언';
   const arr = subSectionMapByCategory[category] || [];
   const idxMap = { ONE: 0, TWO: 1, THREE: 2, FOUR: 3, FIVE: 4, SIX: 5, SEVEN: 6 };
   return arr[idxMap[subSection]] || subSection;
@@ -201,9 +212,9 @@ function SidebarNewsItem({ post, index }) {
   );
 }
 
-export default function PostListPage() {
+export default function SearchResultPage() {
   const [searchParams] = useSearchParams();
-  const category = searchParams.get('category') || '오피니언';
+  const query = searchParams.get('query') || '';
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -211,18 +222,24 @@ export default function PostListPage() {
   const [totalElements, setTotalElements] = useState(0);
 
   useEffect(() => {
+    if (!query.trim()) {
+      setPosts([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
-    getPostsByCategory(category, currentPage - 1, 10).then(data => {
+    searchPosts(query, currentPage - 1, 10).then(data => {
       setPosts(data.content || []);
       setTotalPages(data.totalPages || 1);
       setTotalElements(data.totalElements || 0);
       setLoading(false);
     }).catch(error => {
-      console.error('게시글 로딩 중 오류 발생:', error);
+      console.error('검색 중 오류 발생:', error);
       setPosts([]);
       setLoading(false);
     });
-  }, [category, currentPage]);
+  }, [query, currentPage]);
 
   // 사이드바용 뉴스 (임시 데이터)
   const sidebarNews = posts.slice(0, 4);
@@ -234,19 +251,22 @@ export default function PostListPage() {
       <div id="sections" className="post-list-container">
         {/* section: 본문 */}
         <section className="section">
-          {/* header: 카테고리명 + 뷰옵션 */}
+          {/* header: 검색어 + 뷰옵션 */}
           <div className="header">
             <div className="category-header">
-              <h1 className="category-title">{category} 목록</h1>
+              <h1 className="category-title">검색 결과: "{query}"</h1>
               <span className="category-count">(총 : {totalElements}건)</span>
             </div>
           </div>
           {/* section-body: 게시글 리스트 */}
           <div className="section-body">
             {loading ? (
-              <div className="post-list-loading">로딩 중...</div>
+              <div className="post-list-loading">검색 중...</div>
             ) : posts.length === 0 ? (
-              <div className="post-list-empty">게시글이 없습니다.</div>
+              <div className="post-list-empty">
+                <p>검색 결과가 없습니다.</p>
+                <p>다른 키워드로 검색해보세요.</p>
+              </div>
             ) : (
               <div className="post-list">
                 {posts.map(post => (
@@ -257,7 +277,7 @@ export default function PostListPage() {
                         <h3 className="post-title">{post.title}</h3>
                         <p className="post-summary">{getTwoLineSummary(extractTextFromHtml(post.content))}</p>
                         <div className="post-meta">
-                          <span className="post-subcategory">{getSubCategoryName(category, post.subSection)}</span>
+                          <span className="post-subcategory">{getSubCategoryName(post.section, post.subSection)}</span>
                           <span className="post-author">윤미연 기자</span>
                           <span className="post-date">{formatDateTime(post.updatedAt)}</span>
                         </div>

@@ -221,6 +221,21 @@
   font-size: 1.1rem;
 }
 
+.post-list-empty p {
+  margin: 10px 0;
+}
+
+.post-list-empty p:first-child {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.post-list-empty p:last-child {
+  font-size: 0.9rem;
+  color: #999;
+}
+
 /* 사이드바 */
 .sidebar-section {
   margin-bottom: 25px;
@@ -413,5 +428,11 @@
     min-width: 30px;
     height: 30px;
     font-size: 12px;
+  }
+  
+  .pagination-btn.pagination-nav {
+    min-width: 35px;
+    height: 35px;
+    font-size: 1rem;
   }
 } 
