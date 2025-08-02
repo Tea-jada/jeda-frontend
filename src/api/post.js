@@ -126,4 +126,51 @@ export async function searchPosts(keyword, page = 0, size = 10) {
     totalElements: result.data?.totalElements || 0,
     currentPage: result.data?.number || 0
   };
+}
+
+// 댓글 관련 API 함수들
+export async function createComment(postId, content) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}/comments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token,
+    },
+    body: JSON.stringify({ comment: content }),
+  });
+  const result = await response.json();
+  return { status: response.status, ...result };
+}
+
+export async function getComments(postId) {
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}/comments?page=0`);
+  if (!response.ok) return [];
+  const result = await response.json();
+  return result.data?.content || [];
+}
+
+export async function deleteComment(commentId) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/comments/${commentId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: token,
+    },
+  });
+  return response;
+}
+
+export async function updateComment(commentId, content) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/comments/${commentId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token,
+    },
+    body: JSON.stringify({ comment: content }),
+  });
+  const result = await response.json();
+  return { status: response.status, ...result };
 } 

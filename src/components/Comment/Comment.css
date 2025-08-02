@@ -1,0 +1,382 @@
+.comment-section {
+  margin-top: 40px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 20px;
+}
+
+.comment-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.comment-login-required {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 14px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.comment-writer {
+  margin-bottom: 30px;
+}
+
+.comment-input-container {
+  position: relative;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.comment-input {
+  width: 100%;
+  min-height: 80px;
+  padding: 15px;
+  border: none;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  background: transparent;
+}
+
+.comment-input:focus {
+  border-color: #007bff;
+}
+
+.comment-input::placeholder {
+  color: #999;
+}
+
+.comment-submit-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.comment-submit-btn:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.comment-submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.comment-list {
+  margin-top: 20px;
+}
+
+.comment-loading,
+.comment-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 14px;
+}
+
+.comment-item {
+  padding: 20px 40px 20px 0;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.comment-content {
+  color: #333;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 8px;
+}
+
+.comment-date {
+  color: #999;
+  font-size: 12px;
+}
+
+.comment-delete-btn {
+  position: absolute;
+  top: 20px;
+  right: 0;
+  padding: 4px 8px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.comment-delete-btn:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.comment-delete-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* 메뉴 버튼 */
+.comment-menu-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  line-height: 1;
+  z-index: 5;
+}
+
+.comment-menu-btn:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+/* 메뉴 드롭다운 */
+.comment-menu-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 10px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  min-width: 80px;
+}
+
+.comment-menu-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.comment-menu-dropdown button:hover {
+  background-color: #f8f9fa;
+}
+
+.comment-menu-dropdown button:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.comment-menu-dropdown button:last-child {
+  border-radius: 0 0 8px 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* 수정 컨테이너 */
+.comment-edit-container {
+  margin: 10px 0;
+}
+
+.comment-edit-input {
+  width: 100%;
+  min-height: 60px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  margin-bottom: 10px;
+}
+
+.comment-edit-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.comment-edit-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.comment-cancel-btn {
+  padding: 6px 12px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.comment-cancel-btn:hover {
+  background-color: #5a6268;
+}
+
+.comment-update-btn {
+  padding: 6px 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.comment-update-btn:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.comment-update-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* 모달 스타일 */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal-content p {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.modal-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.modal-actions button:first-child {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-actions button:first-child:disabled {
+  background: #f8bbbb;
+  cursor: not-allowed;
+}
+
+.modal-actions button:last-child {
+  background: #eee;
+  color: #333;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-actions button:last-child:disabled {
+  background: #f5f5f5;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .comment-section {
+    margin-top: 30px;
+    padding-top: 15px;
+  }
+  
+  .comment-section h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .comment-input {
+    min-height: 60px;
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  .comment-submit-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .comment-item {
+    padding: 15px 0;
+  }
+  
+  .comment-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .comment-author {
+    font-size: 13px;
+  }
+  
+  .comment-date {
+    font-size: 11px;
+  }
+  
+  .comment-content {
+    font-size: 13px;
+  }
+} 
