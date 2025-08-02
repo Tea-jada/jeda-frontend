@@ -144,10 +144,10 @@ export async function createComment(postId, content) {
 }
 
 export async function getComments(postId) {
-  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}/comments`);
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}/comments?page=0`);
   if (!response.ok) return [];
   const result = await response.json();
-  return result.data || [];
+  return result.data?.content || [];
 }
 
 export async function deleteComment(postId, commentId) {

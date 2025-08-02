@@ -91,23 +91,27 @@
 .comment-item {
   padding: 20px 0;
   border-bottom: 1px solid #f0f0f0;
+  position: relative;
 }
 
 .comment-item:last-child {
   border-bottom: none;
 }
 
-.comment-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  gap: 10px;
-}
-
 .comment-author {
   font-weight: 600;
   color: #333;
   font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.comment-content {
+  color: #333;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 8px;
 }
 
 .comment-date {
@@ -116,7 +120,9 @@
 }
 
 .comment-delete-btn {
-  margin-left: auto;
+  position: absolute;
+  top: 20px;
+  right: 0;
   padding: 4px 8px;
   background-color: #dc3545;
   color: white;
@@ -134,14 +140,6 @@
 .comment-delete-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
-}
-
-.comment-content {
-  color: #333;
-  font-size: 14px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-word;
 }
 
 /* 반응형 디자인 */

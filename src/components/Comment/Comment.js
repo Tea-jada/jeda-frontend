@@ -140,22 +140,20 @@ export default function Comment({ postId }) {
          ) : (
            comments.map((comment) => (
              <div key={comment.id} className="comment-item">
-               <div className="comment-header">
-                 <span className="comment-author">{comment.username}</span>
-                 <span className="comment-date">
-                   {new Date(comment.createdAt).toLocaleString('ko-KR')}
-                 </span>
-                 {isCommentOwner(comment) && (
-                   <button
-                     className="comment-delete-btn"
-                     onClick={() => handleDelete(comment.id)}
-                     disabled={deleting === comment.id}
-                   >
-                     {deleting === comment.id ? '삭제 중...' : '삭제'}
-                   </button>
-                 )}
+               <div className="comment-author">{comment.username}</div>
+               <div className="comment-content">{comment.comment}</div>
+               <div className="comment-date">
+                 {new Date(comment.updatedAt).toLocaleString('ko-KR')}
                </div>
-               <div className="comment-content">{comment.content}</div>
+               {isCommentOwner(comment) && (
+                 <button
+                   className="comment-delete-btn"
+                   onClick={() => handleDelete(comment.id)}
+                   disabled={deleting === comment.id}
+                 >
+                   {deleting === comment.id ? '삭제 중...' : '삭제'}
+                 </button>
+               )}
              </div>
            ))
          )}
