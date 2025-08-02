@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { getPostById, deletePost } from '../../api/post';
 import MainLayout from '../../components/MainLayout';
 import Comment from '../../components/Comment/Comment';
@@ -68,7 +68,6 @@ function getUsernameFromToken() {
 export default function PostDetailPage() {
   const { postId } = useParams();
   const navigate = useNavigate();
-  // const location = useLocation();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
