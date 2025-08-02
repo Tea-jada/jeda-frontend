@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getPostById, deletePost } from '../../api/post';
 import MainLayout from '../../components/MainLayout';
+import Comment from '../../components/Comment/Comment';
 import './PostDetailPage.css';
 
 // 카테고리별 subSection 매핑
@@ -67,10 +68,7 @@ function getUsernameFromToken() {
 export default function PostDetailPage() {
   const { postId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const query = new URLSearchParams(location.search);
-  const category = query.get('category');
-  const sub = query.get('sub');
+  // const location = useLocation();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -153,6 +151,9 @@ export default function PostDetailPage() {
                 </div>
               )}
               <div className="tea-news-content" dangerouslySetInnerHTML={{ __html: post.content }} />
+              
+              {/* 댓글 컴포넌트 */}
+              <Comment postId={postId} />
             </>
           )}
         </div>

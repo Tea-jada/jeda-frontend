@@ -126,4 +126,37 @@ export async function searchPosts(keyword, page = 0, size = 10) {
     totalElements: result.data?.totalElements || 0,
     currentPage: result.data?.number || 0
   };
+}
+
+// 댓글 관련 API 함수들
+export async function createComment(postId, content) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}/comments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token,
+    },
+    body: JSON.stringify({ content }),
+  });
+  const result = await response.json();
+  return { status: response.status, ...result };
+}
+
+export async function getComments(postId) {
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}/comments`);
+  if (!response.ok) return [];
+  const result = await response.json();
+  return result.data || [];
+}
+
+export async function deleteComment(postId, commentId) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}/comments/${commentId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: token,
+    },
+  });
+  return response;
 } 
