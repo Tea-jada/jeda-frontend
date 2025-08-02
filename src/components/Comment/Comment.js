@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { createComment, getComments, deleteComment } from '../../api/post';
+import { createComment, getComments, deleteComment, updateComment } from '../../api/post';
 import './Comment.css';
 
 function getUsernameFromToken() {
@@ -19,6 +19,10 @@ export default function Comment({ postId }) {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [editContent, setEditContent] = useState('');
+  const [showMenu, setShowMenu] = useState(null);
+  const [updating, setUpdating] = useState(null);
 
   const userEmail = getUsernameFromToken();
   const isLoggedIn = !!userEmail;
@@ -72,6 +76,7 @@ export default function Comment({ postId }) {
     if (!window.confirm('댓글을 삭제하시겠습니까?')) return;
     
     setDeleting(commentId);
+    setShowMenu(null);
     try {
       const response = await deleteComment(postId, commentId);
       if (response.ok) {
@@ -88,7 +93,44 @@ export default function Comment({ postId }) {
   };
 
   const isCommentOwner = (comment) => {
-    return userEmail && comment.email && userEmail === comment.email;
+    return userEmail && comment.email;
+  };
+
+  const handleEdit = (comment) => {
+    setEditing(comment.id);
+    setEditContent(comment.comment);
+    setShowMenu(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditing(null);
+    setEditContent('');
+    setShowMenu(null);
+  };
+
+  const handleUpdateComment = async (commentId) => {
+    if (!editContent.trim()) return;
+    
+    setUpdating(commentId);
+    try {
+      const result = await updateComment(commentId, editContent);
+      if (result.status === 200 || result.status === 201) {
+        setEditing(null);
+        setEditContent('');
+        await loadComments(); // 댓글 목록 새로고침
+      } else {
+        alert('댓글 수정에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('댓글 수정 실패:', error);
+      alert('댓글 수정에 실패했습니다.');
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  const toggleMenu = (commentId) => {
+    setShowMenu(showMenu === commentId ? null : commentId);
   };
 
   if (!isLoggedIn) {
@@ -138,24 +180,60 @@ export default function Comment({ postId }) {
          ) : !Array.isArray(comments) || comments.length === 0 ? (
            <div className="comment-empty">첫 번째 댓글을 작성해보세요!</div>
          ) : (
-           comments.map((comment) => (
-             <div key={comment.id} className="comment-item">
-               <div className="comment-author">{comment.username}</div>
-               <div className="comment-content">{comment.comment}</div>
-               <div className="comment-date">
-                 {new Date(comment.updatedAt).toLocaleString('ko-KR')}
-               </div>
-               {isCommentOwner(comment) && (
-                 <button
-                   className="comment-delete-btn"
-                   onClick={() => handleDelete(comment.id)}
-                   disabled={deleting === comment.id}
-                 >
-                   {deleting === comment.id ? '삭제 중...' : '삭제'}
-                 </button>
-               )}
-             </div>
-           ))
+                       comments.map((comment) => (
+              <div key={comment.id} className="comment-item">
+                {/* 메뉴 버튼 */}
+                {isCommentOwner(comment) && (
+                  <button
+                    className="comment-menu-btn"
+                    onClick={() => toggleMenu(comment.id)}
+                  >
+                    ⋯
+                  </button>
+                )}
+                
+                {/* 메뉴 드롭다운 */}
+                {showMenu === comment.id && isCommentOwner(comment) && (
+                  <div className="comment-menu-dropdown">
+                    <button onClick={() => handleEdit(comment)}>수정</button>
+                    <button onClick={() => handleDelete(comment.id)}>삭제</button>
+                  </div>
+                )}
+                
+                <div className="comment-author">{comment.username}</div>
+                
+                {editing === comment.id ? (
+                  <div className="comment-edit-container">
+                    <textarea
+                      className="comment-edit-input"
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                    />
+                    <div className="comment-edit-actions">
+                      <button
+                        className="comment-cancel-btn"
+                        onClick={handleCancelEdit}
+                      >
+                        취소
+                      </button>
+                      <button
+                        className="comment-update-btn"
+                        onClick={() => handleUpdateComment(comment.id)}
+                        disabled={updating === comment.id || !editContent.trim()}
+                      >
+                        {updating === comment.id ? '수정 중...' : '등록'}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="comment-content">{comment.comment}</div>
+                )}
+                
+                <div className="comment-date">
+                  {new Date(comment.updatedAt).toLocaleString('ko-KR')}
+                </div>
+              </div>
+            ))
          )}
        </div>
     </div>

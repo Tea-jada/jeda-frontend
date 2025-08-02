@@ -159,4 +159,18 @@ export async function deleteComment(postId, commentId) {
     },
   });
   return response;
+}
+
+export async function updateComment(commentId, content) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/comments/${commentId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token,
+    },
+    body: JSON.stringify({ comment: content }),
+  });
+  const result = await response.json();
+  return { status: response.status, ...result };
 } 
