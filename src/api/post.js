@@ -137,7 +137,7 @@ export async function createComment(postId, content) {
       'Content-Type': 'application/json',
       Authorization: token,
     },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ comment: content }),
   });
   const result = await response.json();
   return { status: response.status, ...result };
