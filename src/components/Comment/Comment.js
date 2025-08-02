@@ -23,6 +23,7 @@ export default function Comment({ postId }) {
   const [editContent, setEditContent] = useState('');
   const [showMenu, setShowMenu] = useState(null);
   const [updating, setUpdating] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(null);
 
   const userEmail = getUsernameFromToken();
   const isLoggedIn = !!userEmail;
@@ -73,13 +74,18 @@ export default function Comment({ postId }) {
   };
 
   const handleDelete = async (commentId) => {
-    if (!window.confirm('댓글을 삭제하시겠습니까?')) return;
+    setShowDeleteModal(commentId);
+    setShowMenu(null);
+  };
+
+  const confirmDelete = async () => {
+    const commentId = showDeleteModal;
+    if (!commentId) return;
     
     setDeleting(commentId);
-    setShowMenu(null);
     try {
-      const response = await deleteComment(postId, commentId);
-      if (response.ok) {
+      const response = await deleteComment(commentId);
+      if (response.status === 200) {
         await loadComments(); // 댓글 목록 새로고침
       } else {
         alert('댓글 삭제에 실패했습니다.');
@@ -89,6 +95,7 @@ export default function Comment({ postId }) {
       alert('댓글 삭제에 실패했습니다.');
     } finally {
       setDeleting(null);
+      setShowDeleteModal(null);
     }
   };
 
@@ -173,69 +180,86 @@ export default function Comment({ postId }) {
         </div>
       </div>
 
-             {/* 댓글 목록 */}
-       <div className="comment-list">
-         {loading ? (
-           <div className="comment-loading">댓글을 불러오는 중...</div>
-         ) : !Array.isArray(comments) || comments.length === 0 ? (
-           <div className="comment-empty">첫 번째 댓글을 작성해보세요!</div>
-         ) : (
-                       comments.map((comment) => (
-              <div key={comment.id} className="comment-item">
-                {/* 메뉴 버튼 */}
-                {isCommentOwner(comment) && (
-                  <button
-                    className="comment-menu-btn"
-                    onClick={() => toggleMenu(comment.id)}
-                  >
-                    ⋯
-                  </button>
-                )}
-                
-                {/* 메뉴 드롭다운 */}
-                {showMenu === comment.id && isCommentOwner(comment) && (
-                  <div className="comment-menu-dropdown">
-                    <button onClick={() => handleEdit(comment)}>수정</button>
-                    <button onClick={() => handleDelete(comment.id)}>삭제</button>
-                  </div>
-                )}
-                
-                <div className="comment-author">{comment.username}</div>
-                
-                {editing === comment.id ? (
-                  <div className="comment-edit-container">
-                    <textarea
-                      className="comment-edit-input"
-                      value={editContent}
-                      onChange={(e) => setEditContent(e.target.value)}
-                    />
-                    <div className="comment-edit-actions">
-                      <button
-                        className="comment-cancel-btn"
-                        onClick={handleCancelEdit}
-                      >
-                        취소
-                      </button>
-                      <button
-                        className="comment-update-btn"
-                        onClick={() => handleUpdateComment(comment.id)}
-                        disabled={updating === comment.id || !editContent.trim()}
-                      >
-                        {updating === comment.id ? '수정 중...' : '등록'}
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="comment-content">{comment.comment}</div>
-                )}
-                
-                <div className="comment-date">
-                  {new Date(comment.updatedAt).toLocaleString('ko-KR')}
+      {/* 댓글 목록 */}
+      <div className="comment-list">
+        {loading ? (
+          <div className="comment-loading">댓글을 불러오는 중...</div>
+        ) : !Array.isArray(comments) || comments.length === 0 ? (
+          <div className="comment-empty">첫 번째 댓글을 작성해보세요!</div>
+        ) : (
+          comments.map((comment) => (
+            <div key={comment.id} className="comment-item">
+              {/* 메뉴 버튼 */}
+              {isCommentOwner(comment) && (
+                <button
+                  className="comment-menu-btn"
+                  onClick={() => toggleMenu(comment.id)}
+                >
+                  ⋯
+                </button>
+              )}
+              
+              {/* 메뉴 드롭다운 */}
+              {showMenu === comment.id && isCommentOwner(comment) && (
+                <div className="comment-menu-dropdown">
+                  <button onClick={() => handleEdit(comment)}>수정</button>
+                  <button onClick={() => handleDelete(comment.id)}>삭제</button>
                 </div>
+              )}
+              
+              <div className="comment-author">{comment.username}</div>
+              
+              {editing === comment.id ? (
+                <div className="comment-edit-container">
+                  <textarea
+                    className="comment-edit-input"
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                  />
+                  <div className="comment-edit-actions">
+                    <button
+                      className="comment-cancel-btn"
+                      onClick={handleCancelEdit}
+                    >
+                      취소
+                    </button>
+                    <button
+                      className="comment-update-btn"
+                      onClick={() => handleUpdateComment(comment.id)}
+                      disabled={updating === comment.id || !editContent.trim()}
+                    >
+                      {updating === comment.id ? '수정 중...' : '등록'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="comment-content">{comment.comment}</div>
+              )}
+              
+              <div className="comment-date">
+                {new Date(comment.updatedAt).toLocaleString('ko-KR')}
               </div>
-            ))
-         )}
-       </div>
+            </div>
+          ))
+        )}
+      </div>
+      
+      {/* 삭제 확인 모달 */}
+      {showDeleteModal && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <p>댓글을 삭제하시겠습니까?</p>
+            <div className="modal-actions">
+              <button onClick={confirmDelete} disabled={deleting}>
+                {deleting ? '삭제 중...' : '삭제'}
+              </button>
+              <button onClick={() => setShowDeleteModal(null)} disabled={deleting}>
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 

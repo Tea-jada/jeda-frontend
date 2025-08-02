@@ -150,9 +150,9 @@ export async function getComments(postId) {
   return result.data?.content || [];
 }
 
-export async function deleteComment(postId, commentId) {
+export async function deleteComment(commentId) {
   const token = localStorage.getItem('Authorization');
-  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}/comments/${commentId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/comments/${commentId}`, {
     method: 'DELETE',
     headers: {
       Authorization: token,
