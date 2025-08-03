@@ -109,9 +109,9 @@ function Home() {
 
   return (
     <MainLayout>
-      {/* 주요 게시글 배너 */}
-      {featuredPost && (
-        <div className="main-content">
+      <div className="main-content">
+        {/* 주요 게시글 배너 */}
+        {featuredPost && (
           <header className="main-header">
             <div className="featured-post-banner" onClick={() => handlePostClick(featuredPost.id)}>
               <div className="banner-image">
@@ -131,27 +131,18 @@ function Home() {
               </div>
             </div>
           </header>
-        </div>
-      )}
-
-      {/* 카테고리별 게시글 섹션들 */}
-      <main className="main-content">
-        <PostSection title="오피니언" posts={opinionPosts} />
-        <PostSection title="차와 뉴스" posts={newsPosts} />
-        <PostSection title="차와 문화" posts={culturePosts} />
-        <PostSection title="차와 사람" posts={peoplePosts} />
-        <PostSection title="차의 세계" posts={worldPosts} />
-        <PostSection title="차와 예술" posts={artPosts} />
-
-        {/* 기존 사이드바 */}
-        {/* <aside className="sidebar">
-          <h3>많이 본 기사</h3>
-          <ol>
-            <li>유태근의 함函, 김제원의 사진전</li>
-            <li>티라운지에서 느끼는 모던티의 향연</li>
-          </ol>
-        </aside> */}
-      </main>
+        )}
+  
+        {/* 카테고리별 게시글 섹션들 */}
+        <main>
+          <PostSection title="오피니언" posts={opinionPosts} />
+          <PostSection title="차와 뉴스" posts={newsPosts} />
+          <PostSection title="차와 문화" posts={culturePosts} />
+          <PostSection title="차와 사람" posts={peoplePosts} />
+          <PostSection title="차의 세계" posts={worldPosts} />
+          <PostSection title="차와 예술" posts={artPosts} />
+        </main>
+      </div>
     </MainLayout>
   );
 }

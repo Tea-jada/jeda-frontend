@@ -90,6 +90,7 @@
 .main-content {
   max-width: 1200px;
   padding: 0 2rem;
+  margin: 0 auto;
 }
 
 /* 게시글 섹션 스타일 */
@@ -274,10 +275,6 @@
   
   .placeholder-content h2 {
     font-size: 1.5rem;
-  }
-  
-  .main-content {
-    padding: 0 1rem;
   }
   
   .section-title {
