@@ -7,20 +7,42 @@ import './Home.css';
 function Home() {
   const [featuredPost, setFeaturedPost] = useState(null);
   const [opinionPosts, setOpinionPosts] = useState([]);
+  const [newsPosts, setNewsPosts] = useState([]);
+  const [culturePosts, setCulturePosts] = useState([]);
+  const [peoplePosts, setPeoplePosts] = useState([]);
+  const [worldPosts, setWorldPosts] = useState([]);
+  const [artPosts, setArtPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // 오피니언 게시글 가져오기
-        const result = await getPostsByCategory('오피니언', 0, 5);
-        console.log('API 응답:', result); // 디버깅용
+        // 각 카테고리별로 게시글 가져오기
+        const [opinionResult, newsResult, cultureResult, peopleResult, worldResult, artResult] = await Promise.all([
+          getPostsByCategory('오피니언', 0, 5),
+          getPostsByCategory('차와 뉴스', 0, 4),
+          getPostsByCategory('차와 문화', 0, 4),
+          getPostsByCategory('차와 사람', 0, 4),
+          getPostsByCategory('차의 세계', 0, 4),
+          getPostsByCategory('차와 예술', 0, 4)
+        ]);
+
+        console.log('API 응답들:', { opinionResult, newsResult, cultureResult, peopleResult, worldResult, artResult });
         
-        if (result.content && result.content.length > 0) {
-          setFeaturedPost(result.content[0]); // 첫 번째 게시글을 주요 게시글로
-          setOpinionPosts(result.content.slice(1, 5)); // 나머지 4개를 작은 카드로
+        // 오피니언 - 첫 번째는 featured, 나머지는 opinionPosts
+        if (opinionResult.content && opinionResult.content.length > 0) {
+          setFeaturedPost(opinionResult.content[0]);
+          setOpinionPosts(opinionResult.content.slice(1, 5));
         }
+
+        // 다른 카테고리들
+        if (newsResult.content) setNewsPosts(newsResult.content.slice(0, 4));
+        if (cultureResult.content) setCulturePosts(cultureResult.content.slice(0, 4));
+        if (peopleResult.content) setPeoplePosts(peopleResult.content.slice(0, 4));
+        if (worldResult.content) setWorldPosts(worldResult.content.slice(0, 4));
+        if (artResult.content) setArtPosts(artResult.content.slice(0, 4));
+
       } catch (error) {
         console.error('게시글을 불러오는 중 오류가 발생했습니다:', error);
       } finally {
@@ -45,6 +67,37 @@ function Home() {
   const handlePostClick = (postId) => {
     navigate(`/post/${postId}`);
   };
+
+  const PostCard = ({ post }) => (
+    <article className="opinion-card" onClick={() => handlePostClick(post.id)}>
+      <div className="card-image">
+        {post.thumbnailUrl ? (
+          <img src={post.thumbnailUrl} alt={post.title} />
+        ) : (
+          <div className="card-placeholder">
+            <div className="placeholder-icon">🍵</div>
+          </div>
+        )}
+      </div>
+      <div className="card-content">
+        <h3>{removeHtmlTags(post.title)}</h3>
+        <p>{getThreeLineContent(removeHtmlTags(post.content))}</p>
+      </div>
+    </article>
+  );
+
+  const PostSection = ({ title, posts }) => (
+    posts.length > 0 && (
+      <section className="post-section">
+        <h2 className="section-title">{title}</h2>
+        <div className="opinion-cards">
+          {posts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+      </section>
+    )
+  );
 
   if (loading) {
     return (
@@ -81,36 +134,23 @@ function Home() {
         </div>
       )}
 
-      {/* 4개의 작은 카드 섹션 */}
+      {/* 카테고리별 게시글 섹션들 */}
       <main className="main-content">
-        <section className="opinion-cards">
-          {opinionPosts.map((post, index) => (
-            <article key={post.id} className="opinion-card" onClick={() => handlePostClick(post.id)}>
-              <div className="card-image">
-                {post.thumbnailUrl ? (
-                  <img src={post.thumbnailUrl} alt={post.title} />
-                ) : (
-                  <div className="card-placeholder">
-                    <div className="placeholder-icon">🍵</div>
-                  </div>
-                )}
-              </div>
-              <div className="card-content">
-                <h3>{removeHtmlTags(post.title)}</h3>
-                <p>{getThreeLineContent(removeHtmlTags(post.content))}</p>
-              </div>
-            </article>
-          ))}
-        </section>
+        <PostSection title="오피니언" posts={opinionPosts} />
+        <PostSection title="차와 뉴스" posts={newsPosts} />
+        <PostSection title="차와 문화" posts={culturePosts} />
+        <PostSection title="차와 사람" posts={peoplePosts} />
+        <PostSection title="차의 세계" posts={worldPosts} />
+        <PostSection title="차와 예술" posts={artPosts} />
 
         {/* 기존 사이드바 */}
-        <aside className="sidebar">
+        {/* <aside className="sidebar">
           <h3>많이 본 기사</h3>
           <ol>
             <li>유태근의 함函, 김제원의 사진전</li>
             <li>티라운지에서 느끼는 모던티의 향연</li>
           </ol>
-        </aside>
+        </aside> */}
       </main>
     </MainLayout>
   );
