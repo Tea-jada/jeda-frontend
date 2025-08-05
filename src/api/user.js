@@ -30,4 +30,31 @@ export async function adminSignup({ email, username, password, adminCode }) {
   });
   const data = await response.json();
   return { status: response.status, ...data };
+}
+
+export async function getUserInfo(userId) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/users/info/${userId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token,
+    },
+  });
+  const result = await response.json();
+  return { status: response.status, ...result };
+}
+
+export async function updateUserInfo(userId, updateData) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/users/info/${userId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token,
+    },
+    body: JSON.stringify(updateData),
+  });
+  const result = await response.json();
+  return { status: response.status, ...result };
 } 

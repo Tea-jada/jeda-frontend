@@ -9,6 +9,7 @@ import PostDetailPage from './pages/Post/PostDetailPage'; // 추가
 import SubPostListPage from './pages/Post/SubPostListPage';
 import PostEditPage from './pages/Post/PostEditPage';
 import SearchResultPage from './pages/Post/SearchResultPage';
+import UserInfoEditPage from './pages/User/UserInfoEditPage';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 
@@ -29,10 +30,11 @@ function App() {
         <Route path="/admin-signup" element={<AdminSignupPage />} />
         <Route path="/post-create" element={<PostCreatePage />} />
         <Route path="/posts" element={<PostListPage />} />
-        <Route path="/post/:postId" element={<PostDetailPage />} /> {/* 추가 */}
+        <Route path="/post/:postId" element={<PostDetailPage />} />
         <Route path="/posts/sub" element={<SubPostListPage />} />
         <Route path="/post/edit/:postId" element={<PostEditPage />} />
         <Route path="/search" element={<SearchResultPage />} />
+        <Route path="/user-info" element={<UserInfoEditPage />} />
       </Routes>
     </Router>
   );

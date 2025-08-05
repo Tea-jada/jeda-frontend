@@ -278,7 +278,7 @@ export default function SearchResultPage() {
                         <p className="post-summary">{getTwoLineSummary(extractTextFromHtml(post.content))}</p>
                         <div className="post-meta">
                           <span className="post-subcategory">{getSubCategoryName(post.section, post.subSection)}</span>
-                          <span className="post-author">윤미연 기자</span>
+                          <span className="post-author">{post.username || '작성자'}</span>
                           <span className="post-date">{formatDateTime(post.updatedAt)}</span>
                         </div>
                       </div>
