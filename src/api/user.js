@@ -57,4 +57,17 @@ export async function updateUserInfo(userId, updateData) {
   });
   const result = await response.json();
   return { status: response.status, ...result };
+}
+
+export async function deleteUser(userId) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/users/info/${userId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token,
+    },
+  });
+  const result = await response.json();
+  return { status: response.status, ...result };
 } 
