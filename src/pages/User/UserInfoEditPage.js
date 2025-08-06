@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../components/MainLayout';
-import { getUserInfo, updateUserInfo } from '../../api/user';
+import { getUserInfo, updateUserInfo, deleteUser } from '../../api/user';
 import './UserInfoEditPage.css';
 
 function parseJwt(token) {
@@ -34,6 +34,8 @@ function UserInfoEditPage() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('Authorization');
@@ -148,6 +150,22 @@ function UserInfoEditPage() {
     }
   };
 
+  const handleDeleteUser = async () => {
+    setDeleteError('');
+    try {
+      const data = await deleteUser(userInfo.id);
+      if (data.status === 200) {
+        alert('회원탈퇴가 완료되었습니다.');
+        localStorage.clear();
+        navigate('/');
+      } else {
+        setDeleteError(data.message || '회원탈퇴에 실패했습니다.');
+      }
+    } catch (err) {
+      setDeleteError('회원탈퇴 요청 중 오류가 발생했습니다.');
+    }
+  };
+
   if (loading) {
     return (
       <MainLayout>
@@ -230,6 +248,59 @@ function UserInfoEditPage() {
             )}
           </div>
         </form>
+        {/* 회원탈퇴 버튼 */}
+        <button
+          type="button"
+          style={{
+            width: '100%',
+            padding: '12px 0',
+            background: '#ff3b30',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 4,
+            fontSize: 16,
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            marginTop: 32,
+          }}
+          onClick={() => setShowDeleteModal(true)}
+        >
+          회원탈퇴
+        </button>
+        {/* 탈퇴 확인 모달 */}
+        {showDeleteModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+          }}>
+            <div style={{ background: '#fff', padding: 32, borderRadius: 8, minWidth: 300, textAlign: 'center' }}>
+              <div style={{ fontSize: 18, marginBottom: 24 }}>정말로 회원을 탈퇴하시겠습니까?</div>
+              {deleteError && <div style={{ color: 'red', marginBottom: 12 }}>{deleteError}</div>}
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+                <button
+                  style={{ flex: 1, padding: '10px 0', background: '#ff3b30', color: '#fff', border: 'none', borderRadius: 4, fontWeight: 'bold', cursor: 'pointer' }}
+                  onClick={handleDeleteUser}
+                >
+                  탈퇴
+                </button>
+                <button
+                  style={{ flex: 1, padding: '10px 0', background: '#ccc', color: '#333', border: 'none', borderRadius: 4, fontWeight: 'bold', cursor: 'pointer' }}
+                  onClick={() => setShowDeleteModal(false)}
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </MainLayout>
   );
