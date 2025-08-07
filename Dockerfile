@@ -1,11 +1,9 @@
-# 1단계: 빌드
-FROM node:18 AS build
-WORKDIR /app
-COPY . .
-RUN npm install && npm run build
+FROM gradle:jdk17-jammy AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle build --no-daemon
+LABEL org.name="hezf"
 
-# 2단계: 정적 파일 서빙
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+FROM eclipse-temurin:17-jdk-jammy
+COPY --from=build /home/gradle/src/build/libs/kw-duo-0.0.1.jar app.jar
+ENTRYPOINT ["java", "-jar", "/app.jar"]
