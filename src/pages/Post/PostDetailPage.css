@@ -1,0 +1,311 @@
+/* 뉴스 기사 스타일 전체 래퍼 */
+.tea-news-detail-wrapper {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 48px 32px 48px 32px;
+}
+.tea-news-title {
+  font-size: 2.3rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 18px;
+  color: #222;
+}
+.tea-news-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+  color: #888;
+  margin-bottom: 8px;
+  justify-content: center;
+}
+.tea-news-breadcrumb {
+  font-size: 1.05rem;
+  color: #666;
+  background: #f5f5f5;
+  padding: 10px 16px;
+  border-radius: 6px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.tea-news-date {
+  margin-left: 12px;
+  color: #aaa;
+  font-size: 0.98rem;
+}
+.tea-news-thumbnail {
+  width: 100%;
+  max-height: 340px;
+  overflow: hidden;
+  border-radius: 10px;
+  margin-bottom: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f3f3f3;
+}
+.tea-news-thumbnail img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+  max-height: 340px;
+}
+.tea-news-content {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 1.13rem;
+  color: #333;
+  line-height: 1.8;
+  padding: 0 4px;
+  background: #fff;
+}
+
+/* 카드형 전체 래퍼 */
+.tea-post-detail-wrapper {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 16px;
+  background: #f9f9f9;
+  min-height: 80vh;
+}
+
+.tea-post-detail-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 40px 32px 48px 32px;
+  margin-top: 32px;
+}
+
+.tea-post-detail-breadcrumb {
+  font-size: 15px;
+  color: #888;
+  margin-bottom: 18px;
+}
+.tea-post-detail-breadcrumb a {
+  color: #2d7a2d;
+  text-decoration: none;
+}
+
+.tea-post-detail-thumbnail {
+  width: 100%;
+  max-height: 340px;
+  overflow: hidden;
+  border-radius: 10px;
+  margin-bottom: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f3f3f3;
+}
+.tea-post-detail-thumbnail img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+  max-height: 340px;
+}
+
+.tea-post-detail-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 18px;
+  margin-top: 0;
+}
+
+.tea-post-detail-meta {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  color: #888;
+  font-size: 1rem;
+  margin-bottom: 32px;
+}
+.tea-post-detail-author {
+  font-weight: 500;
+}
+.tea-post-detail-date {
+  font-style: italic;
+}
+
+.tea-post-detail-content {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 1.13rem;
+  color: #333;
+  line-height: 1.8;
+  padding: 0 4px;
+  background: #fff;
+}
+
+.tea-post-detail-loading,
+.tea-post-detail-empty {
+  text-align: center;
+  font-size: 1.3rem;
+  color: #888;
+  margin-top: 80px;
+}
+
+/* grid 레이아웃 및 본문/사이드바 스타일 */
+.tea-news-grid {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 40px auto;
+  align-items: start;
+}
+.tea-news-body {
+  background: #fff;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 48px 40px 48px 40px;
+  min-width: 0;
+}
+.tea-news-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.tea-news-box {
+  background: #fafbfc;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 18px 20px 18px 20px;
+}
+.tea-news-box h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #2d7a2d;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 6px;
+}
+.tea-news-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.tea-news-box li {
+  font-size: 1rem;
+  margin-bottom: 8px;
+  color: #333;
+  cursor: pointer;
+}
+.tea-news-box li:last-child {
+  margin-bottom: 0;
+}
+.tea-news-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin: 6px 0 6px 0;
+}
+.tea-news-actions button {
+  background: transparent;
+  color: #444;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 0.88rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background 0.18s, border 0.18s, color 0.18s;
+  box-shadow: none;
+  outline: none;
+}
+.tea-news-actions button:hover {
+  background: #f5f5f5;
+  border-color: #888;
+  color: #222;
+}
+.tea-news-actions button:last-child {
+  color: #c0392b;
+  border-color: #e0b4b4;
+}
+.tea-news-actions button:last-child:hover {
+  background: #fbeaea;
+  border-color: #c0392b;
+  color: #a93226;
+}
+@media (max-width: 900px) {
+  .tea-news-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .tea-news-sidebar {
+    flex-direction: row;
+    gap: 12px;
+    margin-top: 32px;
+  }
+}
+
+@media (max-width: 600px) {
+  .tea-post-detail-card {
+    padding: 18px 6px 28px 6px;
+  }
+  .tea-post-detail-title {
+    font-size: 1.3rem;
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.4);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-content {
+  background: #fff;
+  padding: 2rem 2.5rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+}
+.modal-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+.modal-actions button:first-child {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-actions button:first-child:disabled {
+  background: #f8bbbb;
+  cursor: not-allowed;
+}
+.modal-actions button:last-child {
+  background: #eee;
+  color: #333;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-actions button:last-child:disabled {
+  background: #f5f5f5;
+  color: #aaa;
+  cursor: not-allowed;
+}
