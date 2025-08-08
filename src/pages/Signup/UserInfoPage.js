@@ -116,6 +116,24 @@ function UserInfoPage() {
           회원가입 완료
         </button>
       </form>
+      <button
+        type="button"
+        style={{
+          display: 'block',
+          margin: '16px auto 0',
+          fontSize: 12,
+          color: '#2d7a2d',
+          background: 'none',
+          border: '1px solid #2d7a2d',
+          borderRadius: 4,
+          padding: '4px 12px',
+          cursor: 'pointer',
+          opacity: 0.7
+        }}
+        onClick={() => navigate('/admin-signup')}
+      >
+        어드민 회원가입
+      </button>
     </div>
   );
 }
