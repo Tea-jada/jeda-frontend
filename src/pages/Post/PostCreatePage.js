@@ -145,6 +145,7 @@ function PostCreatePage() {
   const [subCategory, setSubCategory] = useState(categoryData[0].sub[0] || '');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [registering, setRegistering] = useState(false); // 게시글 등록 중 상태
   const [thumbnailPreview, setThumbnailPreview] = useState(''); // 썸네일 미리보기 URL
   const [thumbnailUrl, setThumbnailUrl] = useState(''); // 서버 업로드된 썸네일 URL
 
@@ -233,6 +234,7 @@ function PostCreatePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setRegistering(true); // 등록 중 오버레이 표시
     // section, subSection 매핑
     const section = category;
     const subSectionIdx = categoryData.find(c => c.name === category)?.sub.findIndex(s => s === subCategory) ?? 0;
@@ -254,6 +256,8 @@ function PostCreatePage() {
       }
     } catch (err) {
       alert(err.message || '게시글 등록 중 오류가 발생했습니다.');
+    } finally {
+      setRegistering(false); // 등록 중 오버레이 해제
     }
   };
 
@@ -270,6 +274,16 @@ function PostCreatePage() {
           <div className="post-create-overlay-content">
             <div className="spinner" />
             이미지 업로드 중...
+          </div>
+          <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
+        </div>
+      )}
+      {/* 게시글 등록 중 오버레이 */}
+      {registering && (
+        <div className="post-create-overlay">
+          <div className="post-create-overlay-content">
+            <div className="spinner" />
+            게시글 등록 중...
           </div>
           <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
         </div>
