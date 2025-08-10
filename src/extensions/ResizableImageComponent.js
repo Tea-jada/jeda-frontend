@@ -135,6 +135,42 @@ export default function ResizableImageComponent({ node, updateAttributes, select
           }
         }}
       />
+      {/* 이미지 캡션 입력란 */}
+      <input
+        type="text"
+        value={`▲ ${node.attrs.caption || ''}`} // 항상 앞에 ▲이 붙음
+        onChange={(e) => {
+          let value = e.target.value;
+
+          // ▲ 부분을 지우려고 하면 다시 복구
+          // if (!value.startsWith('▲ ')) {
+          //   value = '▲ ' + value.replace(/^▲\s*/, '');
+          // }
+
+          // ▲ 뒤의 텍스트만 저장
+          updateAttributes({ caption: value.substring(2) });
+        }}
+        onClick={(e) => {
+          // ▲ 뒤로만 커서 이동
+          if (e.target.selectionStart < 2) {
+            e.target.setSelectionRange(2, 2);
+          }
+        }}
+        onMouseDown={e => e.stopPropagation()}
+        onClickCapture={e => e.stopPropagation()}
+        placeholder="▲ 이미지 설명을 입력하세요"
+        style={{
+          width: width - 4,
+          marginTop: 4,
+          fontSize: 13,
+          color: '#888',
+          border: 'none',
+          background: 'transparent',
+          outline: 'none',
+          display: 'block',
+        }}
+        maxLength={100}
+      />
       {/* 8방향 리사이즈 핸들 */}
       {selected && handles.map(h => (
         <span
