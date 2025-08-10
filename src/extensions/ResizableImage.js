@@ -16,17 +16,48 @@ export const ResizableImage = Node.create({
       width: { default: 300 },
       height: { default: 200 },
       alt: { default: null },
+      caption: { default: '' }, // 캡션 속성 추가
     };
   },
 
   parseHTML() {
-    return [{ tag: 'img[data-resizable-image]' }];
+    return [
+      {
+        tag: 'figure',
+        getAttrs: (node) => {
+          if (!(node instanceof HTMLElement)) return {};
+          const img = node.querySelector('img[data-resizable-image]');
+          const figcaption = node.querySelector('figcaption');
+          return {
+            src: img?.getAttribute('src') || null,
+            width: img?.getAttribute('width') ? parseInt(img.getAttribute('width')) : 300,
+            height: img?.getAttribute('height') ? parseInt(img.getAttribute('height')) : 200,
+            alt: img?.getAttribute('alt') || null,
+            caption: figcaption ? figcaption.textContent.replace(/^▲\s*/, '') : '',
+          };
+        },
+      },
+      { tag: 'img[data-resizable-image]' },
+    ];
   },
 
-  renderHTML({ HTMLAttributes }) {
-    return [
+  renderHTML({ HTMLAttributes, node }) {
+    const children = [];
+    children.push([
       'img',
       mergeAttributes(HTMLAttributes, { 'data-resizable-image': 'true' }),
+    ]);
+    if (node.attrs.caption && node.attrs.caption.trim() !== '') {
+      children.push([
+        'figcaption',
+        { style: 'font-size:13px;color:#888;margin-top:4px;' },
+        `▲ ${node.attrs.caption}`
+      ]);
+    }
+    return [
+      'figure',
+      {},
+      ...children
     ];
   },
 
