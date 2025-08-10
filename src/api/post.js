@@ -173,4 +173,19 @@ export async function updateComment(commentId, content) {
   });
   const result = await response.json();
   return { status: response.status, ...result };
+}
+
+// 게시글 수정 API
+export async function updatePost(postId, { title, content }) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/${postId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: token } : {}),
+    },
+    body: JSON.stringify({ title, content }),
+  });
+  const result = await response.json();
+  return { status: response.status, ...result };
 } 

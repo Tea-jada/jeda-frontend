@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPostById } from '../../api/post';
 import { uploadPostImage } from '../../api/post';
+import { updatePost } from '../../api/post';
 import './PostCreatePage.css';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -163,24 +164,12 @@ function PostEditPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const token = localStorage.getItem('Authorization');
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/posts/${postId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: token } : {}),
-        },
-        body: JSON.stringify({
-          title,
-          content,
-        }),
-      });
-      if (response.status === 200) {
+      const result = await updatePost(postId, { title, content });
+      if (result.status === 200) {
         alert('게시글이 성공적으로 수정되었습니다.');
         navigate(`/post/${postId}`);
       } else {
-        const result = await response.json();
         alert(result.message || '수정에 실패했습니다.');
       }
     } catch (err) {
