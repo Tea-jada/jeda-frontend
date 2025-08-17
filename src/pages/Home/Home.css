@@ -114,20 +114,6 @@
   margin-bottom: 3rem;
 }
 
-.post-card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-}
-
-.post-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-}
-
 .card-image {
   height: 200px;
   overflow: hidden;
@@ -193,6 +179,7 @@
   margin-bottom: 3rem;
 }
 
+.post-card,
 .opinion-card {
   background: white;
   border-radius: 12px;
@@ -200,8 +187,14 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+
+  flex: 1 0 22%;
+  max-width: 250px;
+  display: flex;
+  flex-direction: column;
 }
 
+.post-card:hover,
 .opinion-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
@@ -293,18 +286,18 @@
 .arrow {
   background: white;
   border: 3px solid #ddd;
-  border-radius: 50%;        /* 완전 동그라미 */
+  border-radius: 50%;          /* 동그랗게 */
   width: 50px;
   height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem;         /* 화살표 크기 */
+  font-size: 2rem;             /* 큼직하게 */
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
   color: #444;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 살짝 그림자 */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
 }
 
 
