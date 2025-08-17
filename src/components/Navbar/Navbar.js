@@ -132,6 +132,7 @@ function Navbar() {
           >
             차와 뉴스
             <ul className="dropdown-menu" style={{ display: openDropdown === '차와 뉴스' ? 'block' : 'none' }}>
+              <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 뉴스', '뉴스'); }}>뉴스</li>
               <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 뉴스', '차계'); }}>차계</li>
               <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 뉴스', '농업'); }}>농업</li>
               <li onClick={e => { e.stopPropagation(); handleSubCategoryClick('차와 뉴스', '산업'); }}>산업</li>
