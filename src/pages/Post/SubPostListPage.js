@@ -52,7 +52,7 @@ export default function SubPostListPage() {
                   <img src={post.thumbnailUrl} alt="썸네일" className="post-thumbnail" />
                   <div className="post-meta">
                     <span className="post-subcategory">{subCategory}</span>
-                    <span className="post-author">김우진</span>
+                    <span className="post-author">{post.username || '작성자'}</span>
                     <span className="post-date">{formatDate(post.updatedAt)}</span>
                   </div>
                   <h3 className="post-title">{post.title}</h3>
