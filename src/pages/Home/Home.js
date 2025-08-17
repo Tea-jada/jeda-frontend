@@ -12,39 +12,44 @@ function Home() {
   const [peoplePosts, setPeoplePosts] = useState([]);
   const [worldPosts, setWorldPosts] = useState([]);
   const [artPosts, setArtPosts] = useState([]);
+
+  // 페이지 인덱스 상태 (각 카테고리마다)
+  const [indexes, setIndexes] = useState({
+    opinion: 0,
+    news: 0,
+    culture: 0,
+    people: 0,
+    world: 0,
+    art: 0,
+  });
+
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // 각 카테고리별로 게시글 가져오기
         const [opinionResult, newsResult, cultureResult, peopleResult, worldResult, artResult] = await Promise.all([
-          getPostsByCategory('오피니언', 0, 5),
-          getPostsByCategory('차와 뉴스', 0, 4),
-          getPostsByCategory('차와 문화', 0, 4),
-          getPostsByCategory('차와 사람', 0, 4),
-          getPostsByCategory('차의 세계', 0, 4),
-          getPostsByCategory('차와 예술', 0, 4)
+          getPostsByCategory('오피니언', 0, 20), // 넉넉히 가져오기
+          getPostsByCategory('차와 뉴스', 0, 20),
+          getPostsByCategory('차와 문화', 0, 20),
+          getPostsByCategory('차와 사람', 0, 20),
+          getPostsByCategory('차의 세계', 0, 20),
+          getPostsByCategory('차와 예술', 0, 20)
         ]);
 
-        console.log('API 응답들:', { opinionResult, newsResult, cultureResult, peopleResult, worldResult, artResult });
-        
-        // 오피니언 - 첫 번째는 featured, 나머지는 opinionPosts
-        if (opinionResult.content && opinionResult.content.length > 0) {
+        if (opinionResult.content?.length > 0) {
           setFeaturedPost(opinionResult.content[0]);
-          setOpinionPosts(opinionResult.content.slice(1, 5));
+          setOpinionPosts(opinionResult.content.slice(1)); // 대표 제외 나머지 저장
         }
-
-        // 다른 카테고리들
-        if (newsResult.content) setNewsPosts(newsResult.content.slice(0, 4));
-        if (cultureResult.content) setCulturePosts(cultureResult.content.slice(0, 4));
-        if (peopleResult.content) setPeoplePosts(peopleResult.content.slice(0, 4));
-        if (worldResult.content) setWorldPosts(worldResult.content.slice(0, 4));
-        if (artResult.content) setArtPosts(artResult.content.slice(0, 4));
+        if (newsResult.content) setNewsPosts(newsResult.content);
+        if (cultureResult.content) setCulturePosts(cultureResult.content);
+        if (peopleResult.content) setPeoplePosts(peopleResult.content);
+        if (worldResult.content) setWorldPosts(worldResult.content);
+        if (artResult.content) setArtPosts(artResult.content);
 
       } catch (error) {
-        console.error('게시글을 불러오는 중 오류가 발생했습니다:', error);
+        console.error('게시글을 불러오는 중 오류:', error);
       } finally {
         setLoading(false);
       }
@@ -53,64 +58,70 @@ function Home() {
     fetchPosts();
   }, []);
 
-  const getThreeLineContent = (content) => {
-    if (!content) return '';
-    const lines = content.split('\n').filter(line => line.trim());
-    return lines.slice(0, 3).join('\n');
-  };
+  const removeHtmlTags = (html) => html?.replace(/<[^>]*>/g, '') || '';
+  const handlePostClick = (id) => navigate(`/post/${id}`);
 
-  const removeHtmlTags = (htmlString) => {
-    if (!htmlString) return '';
-    return htmlString.replace(/<[^>]*>/g, '');
-  };
-
-  const handlePostClick = (postId) => {
-    navigate(`/post/${postId}`);
-  };
-
+  // 카드
   const PostCard = ({ post }) => (
     <article className="opinion-card" onClick={() => handlePostClick(post.id)}>
       <div className="card-image">
         {post.thumbnailUrl ? (
           <img src={post.thumbnailUrl} alt={post.title} />
         ) : (
-          <div className="card-placeholder">
-            <div className="placeholder-icon">🍵</div>
-          </div>
+          <div className="card-placeholder"><div className="placeholder-icon">🍵</div></div>
         )}
       </div>
       <div className="card-content">
         <h3>{removeHtmlTags(post.title)}</h3>
-        <p>{getThreeLineContent(removeHtmlTags(post.content))}</p>
       </div>
     </article>
   );
 
-  const PostSection = ({ title, posts }) => (
-    posts.length > 0 && (
-      <section className="post-section">
-        <h2 className="section-title">{title}</h2>
-        <div className="opinion-cards">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
-        </div>
-      </section>
-    )
-  );
+  // 카테고리 섹션 (좌우 화살표 추가)
+  const PostSection = ({ title, posts, categoryKey }) => {
+    const index = indexes[categoryKey]; // 현재 페이지
+    const pageSize = 4;
+    const pagedPosts = posts.slice(index * pageSize, index * pageSize + pageSize);
 
-  if (loading) {
+    const handlePrev = () => {
+      setIndexes((prev) => ({
+        ...prev,
+        [categoryKey]: Math.max(prev[categoryKey] - 1, 0),
+      }));
+    };
+
+    const handleNext = () => {
+      setIndexes((prev) => ({
+        ...prev,
+        [categoryKey]: (prev[categoryKey] + 1 < Math.ceil(posts.length / pageSize))
+          ? prev[categoryKey] + 1
+          : prev[categoryKey],
+      }));
+    };
+
     return (
-      <MainLayout>
-        <div className="loading">로딩 중...</div>
-      </MainLayout>
+      posts.length > 0 && (
+        <section className="post-section">
+          <h2 className="section-title">{title}</h2>
+          <div className="carousel-container">
+            <button className="arrow left" onClick={handlePrev}>⮜</button>
+            <div className="opinion-cards">
+              {pagedPosts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+            <button className="arrow right" onClick={handleNext}>⮞</button>
+          </div>
+        </section>
+      )
     );
-  }
+  };
+
+  if (loading) return <MainLayout><div className="loading">로딩 중...</div></MainLayout>;
 
   return (
     <MainLayout>
       <div className="main-content">
-        {/* 주요 게시글 배너 */}
         {featuredPost && (
           <header className="main-header">
             <div className="featured-post-banner" onClick={() => handlePostClick(featuredPost.id)}>
@@ -118,11 +129,7 @@ function Home() {
                 {featuredPost.thumbnailUrl ? (
                   <img src={featuredPost.thumbnailUrl} alt={featuredPost.title} />
                 ) : (
-                  <div className="placeholder-image">
-                    <div className="placeholder-content">
-                      <h2>티라운지에서 느끼는 모던티의 향연</h2>
-                    </div>
-                  </div>
+                  <div className="placeholder-image"><div className="placeholder-content"><h2>대표 이미지 없음</h2></div></div>
                 )}
               </div>
               <div className="banner-overlay">
@@ -132,15 +139,15 @@ function Home() {
             </div>
           </header>
         )}
-  
-        {/* 카테고리별 게시글 섹션들 */}
+
+        {/* 카테고리 */}
         <main>
-          <PostSection title="오피니언" posts={opinionPosts} />
-          <PostSection title="차와 뉴스" posts={newsPosts} />
-          <PostSection title="차와 문화" posts={culturePosts} />
-          <PostSection title="차와 사람" posts={peoplePosts} />
-          <PostSection title="차의 세계" posts={worldPosts} />
-          <PostSection title="차와 예술" posts={artPosts} />
+          <PostSection title="오피니언" posts={opinionPosts} categoryKey="opinion" />
+          <PostSection title="차와 뉴스" posts={newsPosts} categoryKey="news" />
+          <PostSection title="차와 문화" posts={culturePosts} categoryKey="culture" />
+          <PostSection title="차와 사람" posts={peoplePosts} categoryKey="people" />
+          <PostSection title="차의 세계" posts={worldPosts} categoryKey="world" />
+          <PostSection title="차와 예술" posts={artPosts} categoryKey="art" />
         </main>
       </div>
     </MainLayout>
