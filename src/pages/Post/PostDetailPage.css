@@ -50,14 +50,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f3f3f3;
+  background: white;
 }
 .tea-news-thumbnail img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
+  width: 100%;      
+  height: auto;     
+  object-fit: contain; 
   border-radius: 10px;
-  max-height: 340px;
+  max-height: 340px;  
 }
 .tea-news-content {
   font-family: 'Noto Sans KR', sans-serif;
