@@ -93,7 +93,7 @@ function Navbar() {
       <div className="nav-header">
         <img 
           className="navbar-logo" 
-          src="https://res.cloudinary.com/dy25l3y1v/image/upload/v1753809546/%EC%A0%9C%EB%8B%A4_%ED%8B%B0%EB%A1%9C%EA%B3%A0_%EB%94%94%EC%9E%90%EC%9D%B8-removebg-preview_ffvopy.png"
+          src="https://res.cloudinary.com/dy25l3y1v/image/upload/v1755406115/%EC%A0%9C%EB%8B%A4_%ED%99%88%ED%94%BC_%EB%A1%9C%EA%B3%A0_3%EC%9E%8E-Photoroom_azujip.png"
           alt="제다 로고"
           onClick={() => navigate('/')}
         />
