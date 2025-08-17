@@ -281,3 +281,49 @@
     font-size: 1.3rem;
   }
 }
+
+.carousel-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;        /* 가로 전체 사용 */
+  justify-content: space-between; /* 좌우 여백 조정 */
+}
+
+.arrow {
+  background: white;
+  border: 3px solid #ddd;
+  border-radius: 50%;        /* 완전 동그라미 */
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;         /* 화살표 크기 */
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #444;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 살짝 그림자 */
+}
+
+
+.arrow:hover {
+  background: #81c784;       /* 연한 초록색 */
+  color: white;
+  border-color: #81c784;
+  transform: scale(1.1);     /* hover 시 귀엽게 살짝 커짐 */
+}
+/* 필요 시 좌/우 구분 */
+.arrow-left {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.arrow-right {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
