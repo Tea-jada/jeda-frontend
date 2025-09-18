@@ -183,3 +183,56 @@
     width: 100%;
   }
 }
+
+/* 모바일 메뉴 버튼 */
+.menu-toggle {
+  display: none;
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* PC/모바일 전용 클래스 */
+.desktop-only {
+  display: block;
+}
+.mobile-only {
+  display: none;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+    position: absolute;
+    right: 20px; /* 오른쪽 상단 */
+    top: 15px;
+  }
+
+  .desktop-only {
+    display: none; /* PC 전용 검색창 숨김 */
+  }
+  .mobile-only {
+    display: flex; /* 모바일 전용 검색창 보이기 */
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .nav-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+
+  .user-nav {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .user-nav.open {
+    display: flex;
+  }
+}
