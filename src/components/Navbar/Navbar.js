@@ -23,6 +23,7 @@ function parseJwt(token) {
 function Navbar() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태 추가
+  const [menuOpen, setMenuOpen] = useState(false); // ✅ 모바일 메뉴 상태 추가
 
   const token = localStorage.getItem('Authorization');
   const isLoggedIn = !!token;
@@ -97,7 +98,9 @@ function Navbar() {
           alt="제다 로고"
           onClick={() => navigate('/')}
         />
-        <form className="search-bar" onSubmit={handleSearch}>
+
+        {/* 검색창은 PC에서만 보이고, 모바일에서는 숨김 */}
+        <form className="search-bar desktop-only" onSubmit={handleSearch}>
           <input
             type="text"
             placeholder="검색어를 입력하세요..."
@@ -106,8 +109,29 @@ function Navbar() {
           />
           <button type="submit">검색</button>
         </form>
+
+        {/* 햄버거 버튼 */}
+        <button 
+          className="menu-toggle" 
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          ☰
+        </button>
       </div>
-      <div className="user-nav">
+
+      {/* 모바일 메뉴 영역 */}
+      <div className={`user-nav ${menuOpen ? 'open' : ''}`}>
+        {/* ✅ 모바일에서 검색창은 이 안에 들어옴 */}
+        <form className="search-bar mobile-only" onSubmit={handleSearch}>
+          <input
+            type="text"
+            placeholder="검색어를 입력하세요..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button type="submit">검색</button>
+        </form>
+
         <ul className="navbar-menu">
           <li className="navbar-item"
               onMouseEnter={() => handleDropdownMouseEnter('오피니언')}
@@ -197,6 +221,7 @@ function Navbar() {
             </ul>
           </li>
         </ul>
+
         <div className="navbar-actions">
           {isLoggedIn ? (
             <>
