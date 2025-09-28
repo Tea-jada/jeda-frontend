@@ -13,20 +13,7 @@ export async function uploadPostImage(file) {
   return { status: response.status, ...result };
 }
 
-export async function postPost({ title, content, section, subSection, thumbnailUrl, token }) {
-  // section 매핑
-  const sectionMap = {
-    '오피니언': 'OPINION',
-    '차와 뉴스': 'TEA_AND_NEWS',
-    '차와 문화': 'TEA_AND_CULTURE',
-    '차와 사람': 'TEA_AND_PEAPLE',
-    '차의 세계': 'TEA_AND_WORLD',
-    '차와 예술': 'TEA_AND_ART',
-  };
-  // subSection 매핑 (항목 순서대로 ONE, TWO, ...)
-  const subSectionMap = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN'];
-  const sectionValue = sectionMap[section] || 'OPINION';
-  const subSectionValue = subSectionMap[subSection] || 'ONE';
+export async function postPost({ title, content, category, subCategory, thumbnailUrl, token }) {
   const response = await fetch(`${API_BASE_URL}/api/v1/posts`, {
     method: 'POST',
     headers: {
@@ -34,18 +21,41 @@ export async function postPost({ title, content, section, subSection, thumbnailU
       Authorization: token,
     },
     body: JSON.stringify({
-      type: 'NOTICE',
+      type: '공지사항', 
       title,
       content,
-      category: 'NOTICE',
       thumbnailUrl,
-      section: sectionValue,
-      subSection: subSectionValue,
+      category,        
+      subCategory,      
     }),
+  });
+
+  const result = await response.json();
+  return { status: response.status, ...result };
+}
+
+// 카테고리 목록 조회
+export async function getCategories() {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/categories`, {
+    method: 'GET',
+    headers: token ? { Authorization: token } : {},
   });
   const result = await response.json();
   return { status: response.status, ...result };
 }
+
+// 특정 카테고리의 서브카테고리 조회
+export async function getSubCategories(categoryId) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/categories/${categoryId}/subcategories`, {
+    method: 'GET',
+    headers: token ? { Authorization: token } : {},
+  });
+  const result = await response.json();
+  return { status: response.status, ...result };
+}
+
 
 export async function getPostsByCategory(category, page = 0, size = 10) {
   // section 매핑
