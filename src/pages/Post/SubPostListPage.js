@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { getPostsByCategoryAndSub } from '../../api/post';
 import MainLayout from '../../components/MainLayout';
-import './PostListPage.css';
+import './SubPostListPage.css';
 
 function formatDate(dateStr) {
   const d = new Date(dateStr);
@@ -25,13 +25,20 @@ export default function SubPostListPage() {
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category') || '오피니언';
   const subCategory = searchParams.get('sub') || '';
-  const [posts, setPosts] = useState([]);
+  
+  // posts를 배열이 아니라 전체 객체로 관리
+  const [posts, setPosts] = useState({
+    content: [],
+    totalPages: 0,
+    totalElements: 0,
+    currentPage: 0
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
     getPostsByCategoryAndSub(category, subCategory).then(data => {
-      setPosts(data || []);
+      setPosts(data); // data는 { content, totalPages, ... } 구조
       setLoading(false);
     });
   }, [category, subCategory]);
@@ -42,16 +49,16 @@ export default function SubPostListPage() {
         <h2 className="post-list-title">{category} - {subCategory} 게시글</h2>
         {loading ? (
           <div className="post-list-loading">로딩 중...</div>
-        ) : posts.length === 0 ? (
+        ) : posts.content.length === 0 ? (
           <div className="post-list-empty">게시글이 없습니다.</div>
         ) : (
           <div className="post-list">
-            {posts.map(post => (
+            {posts.content.map(post => (
               <Link to={`/post/${post.id}`} key={post.id} className="post-card-link">
                 <div className="post-card">
                   <img src={post.thumbnailUrl} alt="썸네일" className="post-thumbnail" />
                   <div className="post-meta">
-                    <span className="post-subcategory">{subCategory}</span>
+                    <span className="post-subcategory">{post.subCategory}</span>
                     <span className="post-author">{post.username || '작성자'}</span>
                     <span className="post-date">{formatDate(post.updatedAt)}</span>
                   </div>
@@ -65,4 +72,4 @@ export default function SubPostListPage() {
       </div>
     </MainLayout>
   );
-} 
+}

@@ -1,67 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../components/MainLayout';
-import { getPostsByCategory } from '../../api/post';
+import { getCategories, getPostsByCategory } from '../../api/post';
 import './Home.css';
 
 function Home() {
-  const [featuredPost, setFeaturedPost] = useState(null);
-  const [opinionPosts, setOpinionPosts] = useState([]);
-  const [newsPosts, setNewsPosts] = useState([]);
-  const [culturePosts, setCulturePosts] = useState([]);
-  const [peoplePosts, setPeoplePosts] = useState([]);
-  const [worldPosts, setWorldPosts] = useState([]);
-  const [artPosts, setArtPosts] = useState([]);
-
-  // 페이지 인덱스 상태 (각 카테고리마다)
-  const [indexes, setIndexes] = useState({
-    opinion: 0,
-    news: 0,
-    culture: 0,
-    people: 0,
-    world: 0,
-    art: 0,
-  });
-
+  const [categories, setCategories] = useState([]); // 카테고리 목록
+  const [postsByCategory, setPostsByCategory] = useState({}); // {카테고리명: 게시글목록}
+  const [featuredPost, setFeaturedPost] = useState(null); // 대표 게시글
+  const [indexes, setIndexes] = useState({}); // 각 카테고리별 인덱스
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchData = async () => {
       try {
-        const [opinionResult, newsResult, cultureResult, peopleResult, worldResult, artResult] = await Promise.all([
-          getPostsByCategory('오피니언', 0, 20), // 넉넉히 가져오기
-          getPostsByCategory('차와 뉴스', 0, 20),
-          getPostsByCategory('차와 문화', 0, 20),
-          getPostsByCategory('차와 사람', 0, 20),
-          getPostsByCategory('차의 세계', 0, 20),
-          getPostsByCategory('차와 예술', 0, 20)
-        ]);
+        // 1. 카테고리 목록 가져오기
+        const categoryRes = await getCategories();
+        if (categoryRes.status !== 200) throw new Error(categoryRes.message || '카테고리 조회 실패');
 
-        if (opinionResult.content?.length > 0) {
-          setFeaturedPost(opinionResult.content[0]);
-          setOpinionPosts(opinionResult.content.slice(1)); // 대표 제외 나머지 저장
+        const categoryList = categoryRes.data;
+        setCategories(categoryList);
+
+        // 초기 인덱스 설정
+        const initIndexes = {};
+        categoryList.forEach(cat => {
+          initIndexes[cat.categoryName] = 0;
+        });
+        setIndexes(initIndexes);
+
+        // 2. 각 카테고리별 게시글 가져오기
+        const postsResult = {};
+        for (const cat of categoryList) {
+          const res = await getPostsByCategory(cat.categoryName, 0, 20);
+          postsResult[cat.categoryName] = res.content || [];
+
+          // 대표 게시글 (첫번째 카테고리의 첫번째 글)
+          if (!featuredPost && res.content?.length > 0) {
+            setFeaturedPost(res.content[0]);
+          }
         }
-        if (newsResult.content) setNewsPosts(newsResult.content);
-        if (cultureResult.content) setCulturePosts(cultureResult.content);
-        if (peopleResult.content) setPeoplePosts(peopleResult.content);
-        if (worldResult.content) setWorldPosts(worldResult.content);
-        if (artResult.content) setArtPosts(artResult.content);
 
+        setPostsByCategory(postsResult);
       } catch (error) {
-        console.error('게시글을 불러오는 중 오류:', error);
+        console.error('데이터 조회 중 오류:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPosts();
+    fetchData();
   }, []);
 
   const removeHtmlTags = (html) => html?.replace(/<[^>]*>/g, '') || '';
   const handlePostClick = (id) => navigate(`/post/${id}`);
 
-  // 카드
+  // 카드 컴포넌트
   const PostCard = ({ post }) => (
     <article className="opinion-card" onClick={() => handlePostClick(post.id)}>
       <div className="card-image">
@@ -77,25 +72,25 @@ function Home() {
     </article>
   );
 
-  // 카테고리 섹션 (좌우 화살표 추가)
-  const PostSection = ({ title, posts, categoryKey }) => {
-    const index = indexes[categoryKey]; // 현재 페이지
+  // 카테고리 섹션
+  const PostSection = ({ title, posts }) => {
+    const index = indexes[title] || 0;
     const pageSize = 4;
     const pagedPosts = posts.slice(index * pageSize, index * pageSize + pageSize);
 
     const handlePrev = () => {
       setIndexes((prev) => ({
         ...prev,
-        [categoryKey]: Math.max(prev[categoryKey] - 1, 0),
+        [title]: Math.max(prev[title] - 1, 0),
       }));
     };
 
     const handleNext = () => {
       setIndexes((prev) => ({
         ...prev,
-        [categoryKey]: (prev[categoryKey] + 1 < Math.ceil(posts.length / pageSize))
-          ? prev[categoryKey] + 1
-          : prev[categoryKey],
+        [title]: (prev[title] + 1 < Math.ceil(posts.length / pageSize))
+          ? prev[title] + 1
+          : prev[title],
       }));
     };
 
@@ -140,14 +135,15 @@ function Home() {
           </header>
         )}
 
-        {/* 카테고리 */}
+        {/* 동적으로 카테고리 렌더링 */}
         <main>
-          <PostSection title="오피니언" posts={opinionPosts} categoryKey="opinion" />
-          <PostSection title="차와 뉴스" posts={newsPosts} categoryKey="news" />
-          <PostSection title="차와 문화" posts={culturePosts} categoryKey="culture" />
-          <PostSection title="차와 사람" posts={peoplePosts} categoryKey="people" />
-          <PostSection title="차의 세계" posts={worldPosts} categoryKey="world" />
-          <PostSection title="차와 예술" posts={artPosts} categoryKey="art" />
+          {categories.map(cat => (
+            <PostSection
+              key={cat.categoryId}
+              title={cat.categoryName}
+              posts={postsByCategory[cat.categoryName] || []}
+            />
+          ))}
         </main>
       </div>
     </MainLayout>
