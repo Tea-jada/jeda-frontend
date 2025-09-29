@@ -9,6 +9,7 @@ function Home() {
   const [postsByCategory, setPostsByCategory] = useState({}); // {카테고리명: 게시글목록}
   const [featuredPost, setFeaturedPost] = useState(null); // 대표 게시글
   const [indexes, setIndexes] = useState({}); // 각 카테고리별 인덱스
+
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ function Home() {
 
         setPostsByCategory(postsResult);
       } catch (error) {
-        console.error('데이터 조회 중 오류:', error);
+        console.error('게시글을 불러오는 중 오류:', error);
       } finally {
         setLoading(false);
       }

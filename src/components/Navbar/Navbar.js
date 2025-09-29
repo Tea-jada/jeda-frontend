@@ -120,6 +120,7 @@ function Navbar() {
           onClick={() => navigate('/')}
         />
 
+        {/* 검색창은 PC에서만 보이고, 모바일에서는 숨김 */}
         <form className="search-bar desktop-only" onSubmit={handleSearch}>
           <input
             type="text"
@@ -130,12 +131,15 @@ function Navbar() {
           <button type="submit">검색</button>
         </form>
 
+        {/* 햄버거 버튼 */}
         <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
           ☰
         </button>
       </div>
 
+      {/* 모바일 메뉴 영역 */}
       <div className={`user-nav ${menuOpen ? 'open' : ''}`}>
+        {/* ✅ 모바일에서 검색창은 이 안에 들어옴 */}
         <form className="search-bar mobile-only" onSubmit={handleSearch}>
           <input
             type="text"
