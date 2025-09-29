@@ -27,49 +27,12 @@ function getTwoLineSummary(text, maxLen = 80) {
   return text.slice(0, maxLen) + '...';
 }
 
-// 카테고리별 subSection 매핑
-const subSectionMapByCategory = {
-  '오피니언': [
-    '사설',
-    '칼럼',
-    '송강스님의 세계의 명차',
-    '세운스님의 차로 마음을 보다.',
-    '한남호목사의 차와 인문학',
-    '장미향선생의 제다이야기',
-    '김대호교수가 만난 차인과 제다인',
-  ],
-  '차와 뉴스': [
-    '차계', '농업', '산업', '제다', '단체 소식'
-  ],
-  '차와 문화': [
-    '교육', '여행', '학술', '출판'
-  ],
-  '차와 사람': [
-    '차인', '제다인', '차공예인', '티소믈리에'
-  ],
-  '차의 세계': [
-    '세계의 차', '한국의 차', '대용차', '브랜딩차', '티-가든', '티-카페/티-하우스'
-  ],
-  '차와 예술': [
-    '전시', '다례', '도예', '공예', '공연', '정원'
-  ],
-};
-
-function getSubCategoryName(category, subSection) {
-  const arr = subSectionMapByCategory[category] || [];
-  const idxMap = { ONE: 0, TWO: 1, THREE: 2, FOUR: 3, FIVE: 4, SIX: 5, SEVEN: 6 };
-  return arr[idxMap[subSection]] || subSection;
-}
-
 // 페이지네이션 컴포넌트
 function Pagination({ currentPage, totalPages, onPageChange }) {
-  // totalPages가 0이거나 undefined인 경우 표시하지 않음
-  if (!totalPages || totalPages <= 0) {
-    return null;
-  }
+  if (!totalPages || totalPages <= 0) return null;
 
   const pages = [];
-  const maxVisiblePages = 5; // 표시할 페이지 수를 줄임
+  const maxVisiblePages = 5;
   
   let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
   let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
@@ -85,101 +48,86 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
   return (
     <nav className="pagination" aria-label="Pagination">
       <ul className="pagination-list">
-        {/* 처음 페이지 버튼 */}
         <li className="pagination-item">
           <button 
             className="pagination-btn pagination-nav" 
             onClick={() => onPageChange(1)}
             disabled={currentPage === 1}
-            aria-label="첫 페이지로 이동"
           >
             ≪
           </button>
         </li>
-        
-        {/* 이전 페이지 버튼 */}
         <li className="pagination-item">
           <button 
             className="pagination-btn pagination-nav" 
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            aria-label="이전 페이지로 이동"
           >
             ‹
           </button>
         </li>
-        
-        {/* 페이지 번호들 */}
+
         {startPage > 1 && (
           <>
             <li className="pagination-item">
               <button
                 className="pagination-btn"
                 onClick={() => onPageChange(1)}
-                aria-label="1페이지로 이동"
               >
                 1
               </button>
             </li>
             {startPage > 2 && (
               <li className="pagination-item">
-                <span className="pagination-ellipsis" aria-hidden="true">...</span>
+                <span className="pagination-ellipsis">...</span>
               </li>
             )}
           </>
         )}
-        
+
         {pages.map(page => (
           <li key={page} className="pagination-item">
             <button
               className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
               onClick={() => onPageChange(page)}
-              aria-label={`${page}페이지로 이동`}
-              aria-current={currentPage === page ? 'page' : undefined}
             >
               {page}
             </button>
           </li>
         ))}
-        
+
         {endPage < totalPages && (
           <>
             {endPage < totalPages - 1 && (
               <li className="pagination-item">
-                <span className="pagination-ellipsis" aria-hidden="true">...</span>
+                <span className="pagination-ellipsis">...</span>
               </li>
             )}
             <li className="pagination-item">
               <button
                 className="pagination-btn"
                 onClick={() => onPageChange(totalPages)}
-                aria-label={`${totalPages}페이지로 이동`}
               >
                 {totalPages}
               </button>
             </li>
           </>
         )}
-        
-        {/* 다음 페이지 버튼 */}
+
         <li className="pagination-item">
           <button 
             className="pagination-btn pagination-nav" 
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            aria-label="다음 페이지로 이동"
           >
             ›
           </button>
         </li>
-        
-        {/* 마지막 페이지 버튼 */}
         <li className="pagination-item">
           <button 
             className="pagination-btn pagination-nav" 
             onClick={() => onPageChange(totalPages)}
             disabled={currentPage === totalPages}
-            aria-label="마지막 페이지로 이동"
           >
             ≫
           </button>
@@ -189,7 +137,7 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
   );
 }
 
-// 사이드바 뉴스 아이템 컴포넌트
+// 사이드바 뉴스 아이템
 function SidebarNewsItem({ post, index }) {
   return (
     <div className="sidebar-news-item">
@@ -204,6 +152,7 @@ function SidebarNewsItem({ post, index }) {
 export default function PostListPage() {
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category') || '오피니언';
+  
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -212,19 +161,21 @@ export default function PostListPage() {
 
   useEffect(() => {
     setLoading(true);
-    getPostsByCategory(category, currentPage - 1, 10).then(data => {
-      setPosts(data.content || []);
-      setTotalPages(data.totalPages || 1);
-      setTotalElements(data.totalElements || 0);
-      setLoading(false);
-    }).catch(error => {
-      console.error('게시글 로딩 중 오류 발생:', error);
-      setPosts([]);
-      setLoading(false);
-    });
+    getPostsByCategory(category, currentPage - 1, 10)
+      .then(data => {
+        setPosts(data.content || []);
+        setTotalPages(data.totalPages || 1);
+        setTotalElements(data.totalElements || 0);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('게시글 로딩 중 오류 발생:', error);
+        setPosts([]);
+        setLoading(false);
+      });
   }, [category, currentPage]);
 
-  // 사이드바용 뉴스 (임시 데이터)
+  // 사이드바용 뉴스
   const sidebarNews = posts.slice(0, 4);
   const latestNews = posts.slice(0, 4);
   const popularNews = posts.slice(0, 5);
@@ -232,16 +183,14 @@ export default function PostListPage() {
   return (
     <MainLayout>
       <div id="sections" className="post-list-container">
-        {/* section: 본문 */}
         <section className="section">
-          {/* header: 카테고리명 + 뷰옵션 */}
           <div className="header">
             <div className="category-header">
               <h1 className="category-title">{category} 목록</h1>
               <span className="category-count">(총 : {totalElements}건)</span>
             </div>
           </div>
-          {/* section-body: 게시글 리스트 */}
+
           <div className="section-body">
             {loading ? (
               <div className="post-list-loading">로딩 중...</div>
@@ -255,9 +204,12 @@ export default function PostListPage() {
                       <img src={post.thumbnailUrl} alt="썸네일" className="post-thumbnail" />
                       <div className="post-content">
                         <h3 className="post-title">{post.title}</h3>
-                        <p className="post-summary">{getTwoLineSummary(extractTextFromHtml(post.content))}</p>
+                        <p className="post-summary">
+                          {getTwoLineSummary(extractTextFromHtml(post.content))}
+                        </p>
                         <div className="post-meta">
-                          <span className="post-subcategory">{getSubCategoryName(category, post.subSection)}</span>
+                          {/* 여기서 API 응답 그대로 사용 */}
+                          <span className="post-subcategory">{post.subCategory}</span>
                           <span className="post-author">{post.username || '작성자'}</span>
                           <span className="post-date">{formatDateTime(post.updatedAt)}</span>
                         </div>
@@ -269,9 +221,8 @@ export default function PostListPage() {
             )}
           </div>
         </section>
-        {/* sidebar */}
+
         <aside className="sidebar">
-          {/* 주요뉴스 */}
           <div className="sidebar-section">
             <h3 className="sidebar-title">주요뉴스</h3>
             <div className="sidebar-news-list">
@@ -280,7 +231,7 @@ export default function PostListPage() {
               ))}
             </div>
           </div>
-          {/* 최신기사 */}
+
           <div className="sidebar-section">
             <h3 className="sidebar-title">최신기사</h3>
             <div className="sidebar-news-list">
@@ -289,7 +240,7 @@ export default function PostListPage() {
               ))}
             </div>
           </div>
-          {/* 많이 본 기사 */}
+
           <div className="sidebar-section">
             <h3 className="sidebar-title">많이 본 기사</h3>
             <div className="sidebar-news-list">
@@ -300,7 +251,7 @@ export default function PostListPage() {
           </div>
         </aside>
       </div>
-      {/* 페이지네이션 - 컨테이너 밖에 배치 */}
+
       {!loading && posts.length > 0 && (
         <Pagination
           currentPage={currentPage}
@@ -310,4 +261,4 @@ export default function PostListPage() {
       )}
     </MainLayout>
   );
-} 
+}
