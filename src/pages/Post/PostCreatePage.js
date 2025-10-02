@@ -110,7 +110,7 @@ function PostCreatePage() {
         if (res.status === 200) {
           setCategories(res.data);
           if (res.data.length > 0) {
-            setCategory(res.data[0].categoryId);
+            setCategory(res.data[0].categoryId); // 기본 선택: 첫 번째 카테고리
           }
         } else {
           alert(res.message || '카테고리 조회 실패');
@@ -131,7 +131,7 @@ function PostCreatePage() {
         if (res.status === 200) {
           setSubCategories(res.data);
           if (res.data.length > 0) {
-            setSubCategory(res.data[0].subCategoryId);
+            setSubCategory(res.data[0].subCategoryId); // 기본 선택: 첫 번째 서브카테고리
           } else {
             setSubCategory('');
           }
@@ -198,16 +198,25 @@ function PostCreatePage() {
     }
   };
 
+  // 게시글 등록
   const handleSubmit = async (e) => {
     e.preventDefault();
     setRegistering(true);
     const token = localStorage.getItem('Authorization');
+
+    // ✅ 선택된 ID를 name으로 변환
+    const selectedCategory = categories.find(cat => cat.categoryId === Number(category));
+    const categoryName = selectedCategory ? selectedCategory.categoryName : '';
+
+    const selectedSubCategory = subCategories.find(sub => sub.subCategoryId === Number(subCategory));
+    const subCategoryName = selectedSubCategory ? selectedSubCategory.subCategoryName : '';
+
     try {
       const result = await postPost({
         title,
         content,
-        category,
-        subCategory,
+        category: categoryName,       // 이름으로 전달
+        subCategory: subCategoryName, // 이름으로 전달
         thumbnailUrl,
         token,
       });
