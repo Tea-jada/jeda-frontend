@@ -206,3 +206,32 @@ export async function getLatestPost() {
   const latestPost = result?.data?.content?.[0] || null; // 첫 번째 게시글만 반환
   return latestPost;
 }
+// 게시글 목록 조회 (페이지네이션)
+export async function getAllPosts(page = 0, size = 10) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts?page=${page}&size=${size}`, {
+    method: 'GET',
+    headers: token ? { Authorization: token } : {},
+  });
+
+  if (!response.ok) return { content: [], totalPages: 0, totalElements: 0 };
+
+  const result = await response.json();
+  return {
+    content: result.data?.content || [],
+    totalPages: result.data?.totalPages || 0,
+    currentPage: result.data?.pageable?.pageNumber || 0,
+  };
+}
+
+// 대표 게시글 지정 API
+export async function setFeaturedPost(postId) {
+  const token = localStorage.getItem('Authorization');
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/featured/${postId}`, {
+    method: 'POST',
+    headers: { Authorization: token },
+  });
+
+  const result = await response.json();
+  return { status: response.status, ...result };
+}
