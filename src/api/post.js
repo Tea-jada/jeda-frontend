@@ -232,6 +232,28 @@ export async function setFeaturedPost(postId) {
     headers: { Authorization: token },
   });
 
-  const result = await response.json();
+  let result = {};
+  try {
+    const text = await response.text(); // 먼저 텍스트로 읽기
+    result = text ? JSON.parse(text) : {}; // 내용이 있으면 JSON으로 파싱
+  } catch (e) {
+    console.warn('JSON 파싱 실패 (빈 응답일 수 있음):', e);
+  }
+
   return { status: response.status, ...result };
+}
+
+// 대표 게시글 조회 API
+export async function getFeaturedPost() {
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts/featured/show`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    console.error('대표 게시글 조회 실패:', response.status);
+    return null;
+  }
+
+  const result = await response.json();
+  return result.data || null;
 }

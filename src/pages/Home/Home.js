@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../components/MainLayout';
-import { getCategories, getPostsByCategory, getLatestPost } from '../../api/post';
+import { getCategories, getPostsByCategory, getFeaturedPost } from '../../api/post';
 import './Home.css';
 
 function Home() {
@@ -16,10 +16,10 @@ function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. 최신 게시글 1개 가져오기 (대표 게시글)
-        const latestPost = await getLatestPost();
-        if (latestPost) {
-          setFeaturedPost(latestPost);
+        // 1. 대표 게시글 가져오기
+        const featured = await getFeaturedPost();
+        if (featured) {
+          setFeaturedPost(featured);
         }
   
         // 2. 카테고리 목록 가져오기
