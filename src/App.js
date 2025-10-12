@@ -10,6 +10,7 @@ import SubPostListPage from './pages/Post/SubPostListPage';
 import PostEditPage from './pages/Post/PostEditPage';
 import SearchResultPage from './pages/Post/SearchResultPage';
 import UserInfoEditPage from './pages/User/UserInfoEditPage';
+import FeaturedPostPage from './pages/Post/FeaturedPostPage';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 
@@ -35,6 +36,7 @@ function App() {
         <Route path="/post/edit/:postId" element={<PostEditPage />} />
         <Route path="/search" element={<SearchResultPage />} />
         <Route path="/user-info" element={<UserInfoEditPage />} />
+        <Route path="/featured-post" element={<FeaturedPostPage />} />
       </Routes>
     </Router>
   );

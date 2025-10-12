@@ -3,6 +3,7 @@ import './Navbar.css';
 import { useNavigate } from 'react-router-dom';
 import { getCategories, getSubCategories } from '../../api/post';
 
+// JWT 파싱 함수
 function parseJwt(token) {
   try {
     const base64Url = token.split('.')[1];
@@ -26,6 +27,7 @@ function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // 로그인 상태 및 관리자 여부 확인
   const token = localStorage.getItem('Authorization');
   const isLoggedIn = !!token;
   let isAdmin = false;
@@ -35,13 +37,12 @@ function Navbar() {
   }
 
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [categories, setCategories] = useState([]); // 카테고리 목록
-  const [subCategoriesMap, setSubCategoriesMap] = useState({}); // {categoryId: [subCategories]}
+  const [categories, setCategories] = useState([]);
+  const [subCategoriesMap, setSubCategoriesMap] = useState({});
 
-  // 드롭다운 hover
+  // 드롭다운 hover 시 하위 카테고리 로드
   const handleDropdownMouseEnter = async (category) => {
     setOpenDropdown(category.categoryId);
-
     if (!subCategoriesMap[category.categoryId]) {
       const res = await getSubCategories(category.categoryId);
       if (res.status === 200) {
@@ -57,16 +58,19 @@ function Navbar() {
     setOpenDropdown(null);
   };
 
+  // 로그아웃
   const handleLogout = useCallback(() => {
     localStorage.removeItem('Authorization');
     localStorage.removeItem('Refresh-Token');
     navigate('/');
   }, [navigate]);
 
+  // 카테고리 클릭 시 게시글 목록 이동
   const handleCategoryClick = (categoryName) => {
     navigate(`/posts?category=${encodeURIComponent(categoryName)}`);
   };
 
+  // 서브카테고리 클릭 시 이동
   const handleSubCategoryClick = (categoryName, subCategoryName) => {
     navigate(
       `/posts/sub?category=${encodeURIComponent(categoryName)}&sub=${encodeURIComponent(
@@ -76,6 +80,7 @@ function Navbar() {
     setOpenDropdown(null);
   };
 
+  // 검색
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -83,7 +88,7 @@ function Navbar() {
     }
   };
 
-  // 토큰 만료 체크
+  // 토큰 만료 체크 (자동 로그아웃)
   useEffect(() => {
     if (!token) return;
     const payload = parseJwt(token);
@@ -150,6 +155,7 @@ function Navbar() {
           <button type="submit">검색</button>
         </form>
 
+        {/* 카테고리 메뉴 */}
         <ul className="navbar-menu">
           {categories.map((category) => (
             <li
@@ -180,17 +186,34 @@ function Navbar() {
           ))}
         </ul>
 
+        {/* 사용자 액션 영역 */}
         <div className="navbar-actions">
           {isLoggedIn ? (
             <>
+              {/* ✅ 대표 기사 등록 버튼 (Admin 전용) */}
+              {isAdmin && (
+                <button className="nav-btn" onClick={() => navigate('/featured-post')}>
+                  대표 기사 등록
+                </button>
+              )}
+
               <button onClick={() => navigate('/user-info')}>정보수정</button>
-              {isAdmin && <button onClick={() => navigate('/post-create')}>게시글 작성</button>}
+
+              {/* 어드민 전용 게시글 작성 버튼 */}
+              {isAdmin && (
+                <button onClick={() => navigate('/post-create')}>
+                  게시글 작성
+                </button>
+              )}
+
               <button onClick={handleLogout}>로그아웃</button>
             </>
           ) : (
             <>
               <button onClick={() => navigate('/login')}>로그인</button>
-              <button onClick={() => navigate('/signup-agreement')}>회원가입</button>
+              <button onClick={() => navigate('/signup-agreement')}>
+                회원가입
+              </button>
             </>
           )}
         </div>
