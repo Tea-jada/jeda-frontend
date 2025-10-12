@@ -190,3 +190,19 @@ export async function updateComment(commentId, content) {
   const result = await response.json();
   return { status: response.status, ...result };
 }
+
+// 최신순 게시글 1개 가져오기
+export async function getLatestPost() {
+  const response = await fetch(`${API_BASE_URL}/api/v1/posts?page=0&size=1`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    console.error('최신 게시글 조회 실패:', response.status);
+    return null;
+  }
+
+  const result = await response.json();
+  const latestPost = result?.data?.content?.[0] || null; // 첫 번째 게시글만 반환
+  return latestPost;
+}
