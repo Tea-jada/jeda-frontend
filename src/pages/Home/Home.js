@@ -9,7 +9,6 @@ function Home() {
   const [postsByCategory, setPostsByCategory] = useState({}); // {카테고리명: 게시글목록}
   const [featuredPost, setFeaturedPost] = useState(null); // 대표 게시글
   const [indexes, setIndexes] = useState({}); // 각 카테고리별 인덱스
-
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -19,31 +18,30 @@ function Home() {
       try {
         // 1. 대표 게시글 가져오기
         const featured = await getFeaturedPost();
-        if (featured) {
-          setFeaturedPost(featured);
-        }
-  
+        if (featured) setFeaturedPost(featured);
+
         // 2. 카테고리 목록 가져오기
         const categoryRes = await getCategories();
-        if (categoryRes.status !== 200) throw new Error(categoryRes.message || '카테고리 조회 실패');
-  
+        if (categoryRes.status !== 200)
+          throw new Error(categoryRes.message || '카테고리 조회 실패');
+
         const categoryList = categoryRes.data;
         setCategories(categoryList);
-  
+
         // 초기 인덱스 설정
         const initIndexes = {};
-        categoryList.forEach(cat => {
+        categoryList.forEach((cat) => {
           initIndexes[cat.categoryName] = 0;
         });
         setIndexes(initIndexes);
-  
+
         // 3. 각 카테고리별 게시글 가져오기
         const postsResult = {};
         for (const cat of categoryList) {
           const res = await getPostsByCategory(cat.categoryName, 0, 20);
           postsResult[cat.categoryName] = res.content || [];
         }
-  
+
         setPostsByCategory(postsResult);
       } catch (error) {
         console.error('게시글을 불러오는 중 오류:', error);
@@ -51,12 +49,17 @@ function Home() {
         setLoading(false);
       }
     };
-  
+
     fetchData();
-  }, []);  
+  }, []);
 
   const removeHtmlTags = (html) => html?.replace(/<[^>]*>/g, '') || '';
   const handlePostClick = (id) => navigate(`/post/${id}`);
+
+  // ✅ 카테고리 클릭 시 이동
+  const handleCategoryClick = (categoryName) => {
+    navigate(`/posts?category=${encodeURIComponent(categoryName)}`);
+  };
 
   // 카드 컴포넌트
   const PostCard = ({ post }) => (
@@ -65,7 +68,9 @@ function Home() {
         {post.thumbnailUrl ? (
           <img src={post.thumbnailUrl} alt={post.title} />
         ) : (
-          <div className="card-placeholder"><div className="placeholder-icon">🍵</div></div>
+          <div className="card-placeholder">
+            <div className="placeholder-icon">🍵</div>
+          </div>
         )}
       </div>
       <div className="card-content">
@@ -90,43 +95,67 @@ function Home() {
     const handleNext = () => {
       setIndexes((prev) => ({
         ...prev,
-        [title]: (prev[title] + 1 < Math.ceil(posts.length / pageSize))
-          ? prev[title] + 1
-          : prev[title],
+        [title]:
+          prev[title] + 1 < Math.ceil(posts.length / pageSize)
+            ? prev[title] + 1
+            : prev[title],
       }));
     };
 
     return (
       posts.length > 0 && (
         <section className="post-section">
-          <h2 className="section-title">{title}</h2>
+          {/* ✅ 카테고리 제목 클릭 시 이동 */}
+          <h2
+            className="section-title clickable-category"
+            onClick={() => handleCategoryClick(title)}
+          >
+            {title}
+          </h2>
+
           <div className="carousel-container">
-            <button className="arrow left" onClick={handlePrev}>⮜</button>
+            <button className="arrow left" onClick={handlePrev}>
+              ⮜
+            </button>
             <div className="opinion-cards">
               {pagedPosts.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
             </div>
-            <button className="arrow right" onClick={handleNext}>⮞</button>
+            <button className="arrow right" onClick={handleNext}>
+              ⮞
+            </button>
           </div>
         </section>
       )
     );
   };
 
-  if (loading) return <MainLayout><div className="loading">로딩 중...</div></MainLayout>;
+  if (loading)
+    return (
+      <MainLayout>
+        <div className="loading">로딩 중...</div>
+      </MainLayout>
+    );
 
   return (
     <MainLayout>
       <div className="main-content">
         {featuredPost && (
           <header className="main-header">
-            <div className="featured-post-banner" onClick={() => handlePostClick(featuredPost.id)}>
+            <div
+              className="featured-post-banner"
+              onClick={() => handlePostClick(featuredPost.id)}
+            >
               <div className="banner-image">
                 {featuredPost.thumbnailUrl ? (
                   <img src={featuredPost.thumbnailUrl} alt={featuredPost.title} />
                 ) : (
-                  <div className="placeholder-image"><div className="placeholder-content"><h2>대표 이미지 없음</h2></div></div>
+                  <div className="placeholder-image">
+                    <div className="placeholder-content">
+                      <h2>대표 이미지 없음</h2>
+                    </div>
+                  </div>
                 )}
               </div>
               <div className="banner-overlay">
@@ -139,7 +168,7 @@ function Home() {
 
         {/* 동적으로 카테고리 렌더링 */}
         <main>
-          {categories.map(cat => (
+          {categories.map((cat) => (
             <PostSection
               key={cat.categoryId}
               title={cat.categoryName}

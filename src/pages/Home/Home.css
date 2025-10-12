@@ -320,3 +320,14 @@
   top: 50%;
   transform: translateY(-50%);
 }
+
+/* ✅ 카테고리 제목 클릭 가능하게 표시 */
+.clickable-category {
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.clickable-category:hover {
+  color: #4a7c59; /* 초록 톤으로 강조 */
+  transform: translateX(4px);
+}
