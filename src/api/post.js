@@ -13,7 +13,7 @@ export async function uploadPostImage(file) {
   return { status: response.status, ...result };
 }
 
-export async function postPost({ title, content, category, subCategory, thumbnailUrl, token }) {
+export async function postPost({ title, content, categoryId, subCategoryId, thumbnailUrl, token }) {
   const response = await fetch(`${API_BASE_URL}/api/v1/posts`, {
     method: 'POST',
     headers: {
@@ -25,8 +25,8 @@ export async function postPost({ title, content, category, subCategory, thumbnai
       title,
       content,
       thumbnailUrl,
-      category,        
-      subCategory,      
+      categoryId,        
+      subCategoryId,      
     }),
   });
 

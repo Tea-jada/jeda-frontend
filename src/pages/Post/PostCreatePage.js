@@ -72,9 +72,9 @@ const MenuBar = ({ editor, onImageUpload }) => {
 function PostCreatePage() {
   const [title, setTitle] = useState('');
   const [categories, setCategories] = useState([]); 
-  const [category, setCategory] = useState(''); 
+  const [categoryId, setCategoryId] = useState(0);   // Long 타입 대응
   const [subCategories, setSubCategories] = useState([]);
-  const [subCategory, setSubCategory] = useState('');
+  const [subCategoryId, setSubCategoryId] = useState(0); // Long 타입 대응
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [registering, setRegistering] = useState(false);
@@ -110,7 +110,7 @@ function PostCreatePage() {
         if (res.status === 200) {
           setCategories(res.data);
           if (res.data.length > 0) {
-            setCategory(res.data[0].categoryId);
+            setCategoryId(res.data[0].categoryId); // Long 값 그대로 세팅
           }
         } else {
           alert(res.message || '카테고리 조회 실패');
@@ -124,16 +124,16 @@ function PostCreatePage() {
 
   // 서브카테고리 불러오기
   useEffect(() => {
-    if (!category) return;
+    if (!categoryId) return;
     const fetchSubCategories = async () => {
       try {
-        const res = await getSubCategories(category);
+        const res = await getSubCategories(categoryId);
         if (res.status === 200) {
           setSubCategories(res.data);
           if (res.data.length > 0) {
-            setSubCategory(res.data[0].subCategoryId);
+            setSubCategoryId(res.data[0].subCategoryId);
           } else {
-            setSubCategory('');
+            setSubCategoryId(0);
           }
         } else {
           alert(res.message || '서브카테고리 조회 실패');
@@ -143,7 +143,7 @@ function PostCreatePage() {
       }
     };
     fetchSubCategories();
-  }, [category]);
+  }, [categoryId]);
 
   // 이미지 업로드 및 본문 삽입
   const handleImageUpload = useCallback(() => {
@@ -206,8 +206,8 @@ function PostCreatePage() {
       const result = await postPost({
         title,
         content,
-        category,
-        subCategory,
+        categoryId,
+        subCategoryId,
         thumbnailUrl,
         token,
       });
@@ -252,8 +252,8 @@ function PostCreatePage() {
         <div className="post-create-field">
           <label className="post-create-label">카테고리</label>
           <select
-            value={category}
-            onChange={e => setCategory(e.target.value)}
+            value={categoryId}
+            onChange={e => setCategoryId(Number(e.target.value))}
             className="post-create-select"
           >
             {categories.map(cat => (
@@ -264,8 +264,8 @@ function PostCreatePage() {
             <>
               <label className="post-create-label">서브 카테고리</label>
               <select
-                value={subCategory}
-                onChange={e => setSubCategory(e.target.value)}
+                value={subCategoryId}
+                onChange={e => setSubCategoryId(Number(e.target.value))}
                 className="post-create-select"
               >
                 {subCategories.map(sub => (
