@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../components/MainLayout';
-import { getCategories, getPostsByCategory } from '../../api/post';
+import { getCategories, getPostsByCategory, getLatestPost } from '../../api/post';
 import './Home.css';
 
 function Home() {
@@ -16,32 +16,33 @@ function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. 카테고리 목록 가져오기
+        // 1. 최신 게시글 1개 가져오기 (대표 게시글)
+        const latestPost = await getLatestPost();
+        if (latestPost) {
+          setFeaturedPost(latestPost);
+        }
+  
+        // 2. 카테고리 목록 가져오기
         const categoryRes = await getCategories();
         if (categoryRes.status !== 200) throw new Error(categoryRes.message || '카테고리 조회 실패');
-
+  
         const categoryList = categoryRes.data;
         setCategories(categoryList);
-
+  
         // 초기 인덱스 설정
         const initIndexes = {};
         categoryList.forEach(cat => {
           initIndexes[cat.categoryName] = 0;
         });
         setIndexes(initIndexes);
-
-        // 2. 각 카테고리별 게시글 가져오기
+  
+        // 3. 각 카테고리별 게시글 가져오기
         const postsResult = {};
         for (const cat of categoryList) {
           const res = await getPostsByCategory(cat.categoryName, 0, 20);
           postsResult[cat.categoryName] = res.content || [];
-
-          // 대표 게시글 (첫번째 카테고리의 첫번째 글)
-          if (!featuredPost && res.content?.length > 0) {
-            setFeaturedPost(res.content[0]);
-          }
         }
-
+  
         setPostsByCategory(postsResult);
       } catch (error) {
         console.error('데이터 조회 중 오류:', error);
@@ -49,9 +50,9 @@ function Home() {
         setLoading(false);
       }
     };
-
+  
     fetchData();
-  }, []);
+  }, []);  
 
   const removeHtmlTags = (html) => html?.replace(/<[^>]*>/g, '') || '';
   const handlePostClick = (id) => navigate(`/post/${id}`);
